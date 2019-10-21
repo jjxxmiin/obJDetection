@@ -60,7 +60,7 @@ class VocDataset(data.Dataset):
             target : [xmin,ymin,xmax,ymax,class_id]
         '''
         img = Image.open(self.imgs[index]).convert('RGB')
-        target = self.parse_voc_xml(ET.parse(open(self.anns[index])).getroot())
+        target = self.parse_voc(ET.parse(open(self.anns[index])).getroot())
 
         if self.transform is not None:
             img ,target = self.transform(img, target) # i need update transform
@@ -70,7 +70,7 @@ class VocDataset(data.Dataset):
     def __len__(self):
         return len(self.imgs)
 
-    def parse_voc_xml(self, xml):
+    def parse_voc(self, xml):
         '''
         :param
             xml_path : xml root
