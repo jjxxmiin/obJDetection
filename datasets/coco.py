@@ -1,8 +1,9 @@
-from pycocotools.coco import COCO
+import os
+
 import torch.utils.data as data
 import torchvision.transforms as transforms
 from PIL import Image
-import os
+from pycocotools.coco import COCO
 
 dataDir = 'coco'
 dataType = 'train2017'

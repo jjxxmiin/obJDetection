@@ -1,8 +1,9 @@
-import torch.utils.data as data
-from PIL import Image
 import os
 import sys
+
 import numpy as np
+import torch.utils.data as data
+from PIL import Image
 
 if sys.version_info[0] == 2:
     import xml.etree.cElementTree as ET
