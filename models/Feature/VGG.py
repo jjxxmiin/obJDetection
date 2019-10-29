@@ -7,6 +7,7 @@ class VGG(nn.Module):
     def __init__(self,classes=1000):
         super(VGG,self).__init__()
         '''
+        VGG 16
         layers = [2,2,3,3,3]
         chennels = [64,128,256,512,512]
         '''
