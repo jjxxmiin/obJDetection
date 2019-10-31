@@ -182,7 +182,8 @@ class hourglassNet(nn.Module):
 
         return x
 
-
+'''
 # test
 tester = model_test(hourglassNet())
 tester.summary((3, 511, 511))
+'''
