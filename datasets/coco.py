@@ -1,8 +1,7 @@
 import os
-
+import numpy as np
 import torch.utils.data as data
-import torchvision.transforms as transforms
-from PIL import Image
+from skimage import io
 from pycocotools.coco import COCO
 
 dataDir = 'coco'
@@ -46,7 +45,7 @@ class CocoDataset(data.Dataset):
         img_id = self.ids[index]
         img_file_name = coco.loadImgs(img_id)[0]['file_name']
         img_path = os.path.join(self.img_path, img_file_name)
-        img = Image.open(img_path).convert('RGB')
+        img = io.imread(img_path)
 
         # label
         ann_ids = coco.getAnnIds(imgIds=img_id)
@@ -54,8 +53,7 @@ class CocoDataset(data.Dataset):
 
         # transform
         if self.transform is not None:
-            img, target = self.transform(img, target)
-
+            img, boxes, labels = self.transform(img, target[:, :4], target[:, 4])
         return img, target
 
     def __len__(self):
@@ -79,24 +77,31 @@ class CocoDataset(data.Dataset):
 
                 res.append(box + [c_id])
 
-        return res
+        return np.array(res)
 
     def parse_label(self, label_path):
         coco_map = {}
 
         with open(label_path,'r') as f:
-            for i,line in enumerate(f):
+            for i, line in enumerate(f):
                 coco_map[i] = line[:-1]
 
         return coco_map
 
-# main test
+'''
+import utils.augment as augment
 
-if __name__ == '__main__':
-    custom_coco = CocoDataset(img_path,ann_path,label_path,transform=transforms.ToTensor())
+# test
+def test():
+    custom_coco = CocoDataset(img_path,ann_path,label_path,transform=augment.ToTensor())
     custom_coco_loader = data.DataLoader(dataset=custom_coco,
-                                    batch_size=32,
+                                    batch_size=1,
                                     shuffle=False)
 
-    for i,c in enumerate(custom_coco_loader):
+    for i ,c in enumerate(custom_coco_loader):
+        print(i)
+        print(c)
         break
+
+test()
+'''

@@ -1,9 +1,8 @@
-import os
-import sys
-
+import os, sys
 import numpy as np
+import utils.augment as augment
 import torch.utils.data as data
-from PIL import Image
+from skimage import io
 
 if sys.version_info[0] == 2:
     import xml.etree.cElementTree as ET
@@ -60,11 +59,11 @@ class VocDataset(data.Dataset):
             img : (Image) img
             target : [xmin,ymin,xmax,ymax,class_id]
         '''
-        img = Image.open(self.imgs[index]).convert('RGB')
+        img = io.imread(self.imgs[index])
         target = self.parse_voc(ET.parse(open(self.anns[index])).getroot())
 
         if self.transform is not None:
-            img ,target = self.transform(img, target) # i need update transform
+            img, boxes, labels = self.transform(img, target[:, :4], target[:, -4])
 
         return img, target
 
@@ -96,12 +95,17 @@ class VocDataset(data.Dataset):
 
         return np.array(res)
 
-# main test
 '''
+# main test
 if __name__ == '__main__':
-    custom_voc = VocDataset(img_path,ann_path,transform=transforms.ToTensor())
+    custom_voc = VocDataset(img_path,ann_path,transform=augment.ToTensor())
 
     custom_voc_loader = data.DataLoader(dataset=custom_voc,
-                                    batch_size=32,
+                                    batch_size=1,
                                     shuffle=False)
+
+    for i, c in enumerate(custom_voc_loader):
+        print(i)
+        print(c)
+        break
 '''
