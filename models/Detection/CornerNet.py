@@ -4,8 +4,9 @@ from models.Feature.Hourglass import hourglassNet
 from models.module.corner_pooling import *
 from models.module.layer import conv_bn_relu, conv_bn
 
+
 class CornerNet(nn.Module):
-    def __init__(self,classes=80):
+    def __init__(self, classes=80):
         super(CornerNet,self).__init__()
         self.backbone = hourglassNet()
 
@@ -83,6 +84,9 @@ class CornerNet(nn.Module):
 
         return [heat_tl, embed_tl, off_tl, heat_br, embed_br, off_br]
 
+'''
+# test
 
 tester = model_test(CornerNet())
 tester.summary((3, 511, 511))
+'''

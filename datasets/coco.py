@@ -1,8 +1,9 @@
 import os
 import numpy as np
 import torch.utils.data as data
-from skimage import io
+import skimage.io as io
 from pycocotools.coco import COCO
+import torch
 
 dataDir = 'coco'
 dataType = 'train2017'
@@ -16,7 +17,8 @@ class CocoDataset(data.Dataset):
                  img_path,
                  ann_path,
                  label_path,
-                 transform=None,
+                 torch_transform=None,
+                 custom_transform=None,
                  target_transform=None):
         '''
         :param
@@ -27,7 +29,8 @@ class CocoDataset(data.Dataset):
         self.coco = COCO(ann_path)
         self.ids = list(self.coco.imgToAnns.keys())
         self.label = self.parse_label(label_path)
-        self.transform = transform
+        self.torch_transform = torch_transform
+        self.custom_transform = custom_transform
         self.target_transform = target_transform
 
     def __getitem__(self, index):
@@ -36,8 +39,8 @@ class CocoDataset(data.Dataset):
             index : index
 
         :return
-            img : (Image) img
-            target : [xmin,ymin,xmax,ymax,class_id]
+            img : (numpy Image)
+            target : (numpy) [xmin,ymin,xmax,ymax,class_id]
         '''
         coco = self.coco
 
@@ -45,16 +48,25 @@ class CocoDataset(data.Dataset):
         img_id = self.ids[index]
         img_file_name = coco.loadImgs(img_id)[0]['file_name']
         img_path = os.path.join(self.img_path, img_file_name)
+        # skimage is RGB
         img = io.imread(img_path)
+        #img = Image.open(img_path)
+        #if img.getbands()[0] == 'L':
+        #    img = img.convert('RGB')
 
         # label
         ann_ids = coco.getAnnIds(imgIds=img_id)
         target = self.parse_coco(coco.loadAnns(ann_ids))
 
         # transform
-        if self.transform is not None:
-            img, boxes, labels = self.transform(img, target[:, :4], target[:, 4])
-        return img, target
+        if self.custom_transform is not None:
+            img, boxes, labels = self.custom_transform(img, target[:, :4], target[:, 4])
+            target = np.hstack((boxes, np.expand_dims(labels, axis=1)))
+
+        if self.torch_transform is not None:
+            img = self.torch_transform(img)
+
+        return torch.from_numpy(img).permute(2, 0, 1), target
 
     def __len__(self):
         return len(self.ids)
@@ -64,7 +76,7 @@ class CocoDataset(data.Dataset):
         :param
             ann : coco annotation root
         :return
-            [[xmin,ymin,xmax,ymax,c_id],[xmin,ymin,xmax,ymax,c_id],...]
+            res : (numpy) [[xmin,ymin,xmax,ymax,c_id],[xmin,ymin,xmax,ymax,c_id],...]
         '''
         res = []
 
@@ -89,9 +101,9 @@ class CocoDataset(data.Dataset):
         return coco_map
 
 '''
+# test
 import utils.augment as augment
 
-# test
 def test():
     custom_coco = CocoDataset(img_path,ann_path,label_path,transform=augment.ToTensor())
     custom_coco_loader = data.DataLoader(dataset=custom_coco,
