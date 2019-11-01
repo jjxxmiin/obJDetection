@@ -18,8 +18,7 @@ class CocoDataset(data.Dataset):
                  ann_path,
                  label_path,
                  torch_transform=None,
-                 custom_transform=None,
-                 target_transform=None):
+                 custom_transform=None):
         '''
         :param
             transform: augmentation lib : [img], custom : [img, target]
@@ -29,9 +28,9 @@ class CocoDataset(data.Dataset):
         self.coco = COCO(ann_path)
         self.ids = list(self.coco.imgToAnns.keys())
         self.label = self.parse_label(label_path)
+
         self.torch_transform = torch_transform
         self.custom_transform = custom_transform
-        self.target_transform = target_transform
 
     def __getitem__(self, index):
         '''
@@ -50,9 +49,6 @@ class CocoDataset(data.Dataset):
         img_path = os.path.join(self.img_path, img_file_name)
         # skimage is RGB
         img = io.imread(img_path)
-        #img = Image.open(img_path)
-        #if img.getbands()[0] == 'L':
-        #    img = img.convert('RGB')
 
         # label
         ann_ids = coco.getAnnIds(imgIds=img_id)
@@ -66,7 +62,7 @@ class CocoDataset(data.Dataset):
         if self.torch_transform is not None:
             img = self.torch_transform(img)
 
-        return torch.from_numpy(img).permute(2, 0, 1), target
+        return img, target
 
     def __len__(self):
         return len(self.ids)

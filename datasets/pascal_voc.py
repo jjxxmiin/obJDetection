@@ -1,6 +1,5 @@
 import os, sys
 import numpy as np
-import utils.augment as augment
 import torch.utils.data as data
 from skimage import io
 
@@ -19,17 +18,17 @@ VOC_CLASSES = (
 
 year = '2007'
 
-img_path = 'voc/VOC{}/JPEGImages'.format(year)
-ann_path = 'voc/VOC{}/Annotations'.format(year)
-split_path = 'voc/VOC{}/ImageSets/Main'.format(year)
+img_path = './datasets/voc/VOC{}/JPEGImages'.format(year)
+ann_path = './datasets/voc/VOC{}/Annotations'.format(year)
+split_path = './datasets/voc/VOC{}/ImageSets/Main'.format(year)
 
 class VocDataset(data.Dataset):
     def __init__(self,
                  img_path,
                  ann_path,
                  dataType='train',
-                 transform=None,
-                 target_transform=None):
+                 torch_transform=None,
+                 custom_transform=None):
         '''
         :param
             transform: augmentation lib : [img], custom : [img, target]
@@ -37,8 +36,9 @@ class VocDataset(data.Dataset):
         '''
         self.img_path = img_path
         self.ann_path = ann_path
-        self.transform = transform
-        self.target_transform = target_transform
+
+        self.torch_transform = torch_transform
+        self.custom_transform = custom_transform
 
         type_file = dataType + '.txt'
 
@@ -56,14 +56,19 @@ class VocDataset(data.Dataset):
             index : index
 
         :return
-            img : (Image) img
-            target : [xmin,ymin,xmax,ymax,class_id]
+            img : (numpy Image)
+            target : (numpy) [xmin,ymin,xmax,ymax,class_id]
         '''
         img = io.imread(self.imgs[index])
         target = self.parse_voc(ET.parse(open(self.anns[index])).getroot())
 
-        if self.transform is not None:
-            img, boxes, labels = self.transform(img, target[:, :4], target[:, -4])
+        # transform
+        if self.custom_transform is not None:
+            img, boxes, labels = self.custom_transform(img, target[:, :4], target[:, 4])
+            target = np.hstack((boxes, np.expand_dims(labels, axis=1)))
+
+        if self.torch_transform is not None:
+            img = self.torch_transform(img)
 
         return img, target
 
@@ -75,7 +80,7 @@ class VocDataset(data.Dataset):
         :param
             xml_path : xml root
         :return
-            [[xmin,ymin,xmax,ymax,c_id],[xmin,ymin,xmax,ymax,c_id],...]
+            res : (numpy) [[xmin,ymin,xmax,ymax,c_id],[xmin,ymin,xmax,ymax,c_id],...]
         '''
         objects = xml.findall("object")
 
@@ -97,6 +102,9 @@ class VocDataset(data.Dataset):
 
 '''
 # main test
+
+import utils.augment as augment
+
 if __name__ == '__main__':
     custom_voc = VocDataset(img_path,ann_path,transform=augment.ToTensor())
 

@@ -21,9 +21,11 @@ class ToTensor(object):
 
         numpy : H x W x C -> tensor : C x H x W
         '''
-        return torch.from_numpy(image).permute((2, 0, 1)), torch.from_numpy(boxes), torch.from_numpy(labels)
+        image = torch.from_numpy(image).permute((2, 0, 1))
 
-class Resize():
+        return image, boxes, labels
+
+class Resize(object):
     def __init__(self, output_size):
         assert isinstance(output_size, (int, tuple))
         self.output_size = output_size
@@ -35,8 +37,7 @@ class Resize():
         :param labels: (numpy)
         :return:
         '''
-        #w, h = image.size
-        print(image.shape)
+
         h, w = image.shape[:2]
 
         if isinstance(self.output_size, int):
@@ -51,7 +52,22 @@ class Resize():
         scale_w, scale_h = float(new_w) / w, float(new_h) / h
 
         image_trans = resize(image, (new_h, new_w))
-        #image_trans = image.resize((new_h, new_w), Image.BILINEAR)
         boxes_trans = boxes * [scale_w, scale_h, scale_w, scale_h]
 
         return image_trans, boxes_trans, labels
+
+def custom_collate(batch):
+    '''
+    :param batch: init batch
+    :return:
+    images : (tensor)
+    targets : (list) [(tensor), (tensor)]
+    '''
+    targets = []
+    images = []
+
+    for sample in batch:
+        images.append(sample[0])
+        targets.append(torch.from_numpy(sample[1]))
+
+    return torch.stack(images, 0), targets
