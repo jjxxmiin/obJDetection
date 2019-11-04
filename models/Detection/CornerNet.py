@@ -1,8 +1,8 @@
 import torch.nn as nn
-from utils.tester import model_test
 from models.Feature.Hourglass import hourglassNet
 from models.module.corner_pooling import *
-from models.module.layer import conv_bn_relu, conv_bn
+from models.module.layer import conv_bn, conv_bn_relu
+from utils.tester import model_test
 
 
 class CornerNet(nn.Module):

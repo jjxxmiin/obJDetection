@@ -1,9 +1,11 @@
 import os
+
 import numpy as np
-import torch.utils.data as data
 import skimage.io as io
-from pycocotools.coco import COCO
+
 import torch
+import torch.utils.data as data
+from pycocotools.coco import COCO
 
 dataDir = 'coco'
 dataType = 'train2017'
@@ -61,6 +63,7 @@ class CocoDataset(data.Dataset):
 
         if self.torch_transform is not None:
             img = self.torch_transform(img)
+
 
         return img, target
 

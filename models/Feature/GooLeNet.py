@@ -6,7 +6,7 @@ https://github.com/pytorch/vision/blob/master/torchvision/models/googlenet.py
 
 import torch
 import torch.nn as nn
-from utils.tester import model_test
+
 
 class Inceptionv1(nn.Module):
     def __init__(self, in_planes, n1x1, n3x3red, n3x3, n5x5red, n5x5, pool_planes):
@@ -100,6 +100,3 @@ class GoogLeNet(nn.Module):
         x = x.view(x.size(0), -1)
         x = self.linear(x)
         return x
-
-tester = model_test(GoogLeNet())
-tester.summary((3, 32, 32))

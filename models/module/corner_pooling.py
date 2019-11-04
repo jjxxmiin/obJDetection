@@ -5,7 +5,10 @@ import torch
 
 
 def comp(a, b, A, B):
+    # a와 b를 비교해서 큰 값의 위치 binary mask를 찾는다.
+    # 기울기에 binary mask를 적용 시킨다.
     batch = a.size(0)
+    # one dimension trans
     a_ = a.unsqueeze(1).contiguous().view(batch, 1, -1)
     b_ = b.unsqueeze(1).contiguous().view(batch, 1, -1)
     c_ = torch.cat((a_, b_), 1)

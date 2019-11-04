@@ -1,7 +1,10 @@
-import os, sys
+import os
+import sys
+
 import numpy as np
-import torch.utils.data as data
 from skimage import io
+
+import torch.utils.data as data
 
 if sys.version_info[0] == 2:
     import xml.etree.cElementTree as ET
@@ -70,7 +73,7 @@ class VocDataset(data.Dataset):
         if self.torch_transform is not None:
             img = self.torch_transform(img)
 
-        return img, target
+        return img.float(), target
 
     def __len__(self):
         return len(self.imgs)

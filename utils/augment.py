@@ -1,6 +1,8 @@
-import torch
-from skimage.transform import resize
 import numpy as np
+from skimage.transform import resize
+
+import torch
+
 
 class Compose(object):
     def __init__(self, transforms):
@@ -19,7 +21,7 @@ class ToTensor(object):
         boxes : (numpy)
         labels : (numpy)
 
-        numpy : H x W x C -> tensor : C x H x W
+        numpy : H x W x C -> tensor : C x H x W Float32
         '''
         image = torch.from_numpy(image).permute((2, 0, 1))
 

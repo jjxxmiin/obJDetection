@@ -1,12 +1,19 @@
 import torch
-import torchvision.transforms as transforms
 import torch.optim as optim
+import torchvision.transforms as transforms
+import utils.augment as augment
 from datasets.coco import CocoDataset
 from datasets.pascal_voc import VocDataset
-import utils.augment as augment
 from models.Detection.CornerNet import CornerNet
+from utils.tester import *
 
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+if torch.cuda.is_available():
+    device = 'cuda'
+    torch.set_default_tensor_type('torch.cuda.FloatTensor')
+else:
+    device = 'cpu'
+    torch.set_default_tensor_type('torch.FloatTensor')
+
 
 dataset = 'VOC'
 
@@ -26,7 +33,7 @@ if dataset == 'COCO':
                               custom_transform=custom_transform)
 
     custom_loader = torch.utils.data.DataLoader(dataset=custom_coco,
-                                                     batch_size=2,
+                                                     batch_size=32,
                                                      shuffle=True,
                                                      collate_fn=augment.custom_collate)
 
@@ -44,13 +51,14 @@ if dataset == 'VOC':
                                                      shuffle=True,
                                                      collate_fn=augment.custom_collate)
 
-
-net = CornerNet()
+net = CornerNet().to(device)
 optimizer = optim.Adam(net.parameters(), lr=0.0025)
 
-batch_iterator = iter(custom_loader)
+for i, data in enumerate(custom_loader):
+    images = data[0].to(device)
+    targets = [target.to(device) for target in data[1]]
 
-print(batch_iterator)
-images, targets = next(batch_iterator)
-print(images.shape)
-print(targets)
+    outputs = net(images) # list : [heat_tl, embed_tl, off_tl, heat_br, embed_br, off_br]
+
+    print(outputs)
+    break

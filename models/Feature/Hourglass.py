@@ -4,8 +4,7 @@ channels : 256,384,384,384,512
 '''
 
 import torch.nn as nn
-from utils.tester import model_test
-from models.module.layer import conv_bn_relu, conv_bn
+from models.module.layer import conv_bn, conv_bn_relu
 
 
 class Residual(nn.Module):
@@ -13,11 +12,11 @@ class Residual(nn.Module):
 
     def __init__(self, in_planes, planes, stride=1):
         super(Residual, self).__init__()
-        self.L1 = conv_bn_relu(in_planes, planes,
+        self.layer1 = conv_bn_relu(in_planes, planes,
                                kernel_size=3, stride=stride,
                                padding=1, bias=False)
 
-        self.L2 = conv_bn(planes, planes,
+        self.layer2 = conv_bn(planes, planes,
                           kernel_size=3,
                           padding=1, bias=False)
 
@@ -28,15 +27,15 @@ class Residual(nn.Module):
             self.shortcut = nn.Sequential(
                 conv_bn(in_planes, self.expansion * planes, kernel_size=1, stride=stride, bias=False)
             )
-        self.A2 = nn.ReLU()
+        self.relu = nn.ReLU()
 
     def forward(self, x):
         identity = x
 
-        x = self.L1(x)
-        x = self.L2(x)
+        x = self.layer1(x)
+        x = self.layer2(x)
         x += self.shortcut(identity)
-        x = self.A2(x)
+        x = self.relu(x)
         return x
 
 
@@ -160,12 +159,12 @@ class hourglassNet(nn.Module):
             conv_bn(256, 256, kernel_size=1)
         )
 
-        self.A = nn.ReLU()
-        self.R = Residual(256, 256)
+        self.relu = nn.ReLU()
+        self.residual = Residual(256, 256)
 
         self.hourglass2 = hourglassModule()
 
-        self.C = nn.Conv2d(256, 256, kernel_size=3, padding=1)
+        self.conv = nn.Conv2d(256, 256, kernel_size=3, padding=1)
 
     def forward(self, x):
         x = self.pre_conv(x)
@@ -174,16 +173,11 @@ class hourglassNet(nn.Module):
         x = self.hourglass1(x)
 
         x = self.middle(x) + skip
-        x = self.A(x)
-        x = self.R(x)
+        x = self.relu(x)
+        x = self.residual(x)
 
         x = self.hourglass2(x)
-        x = self.C(x)
+        x = self.conv(x)
 
         return x
 
-'''
-# test
-tester = model_test(hourglassNet())
-tester.summary((3, 511, 511))
-'''
