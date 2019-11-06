@@ -5,49 +5,49 @@ class ZFNet(nn.Module):
     '''
     visualization Network
     '''
-    def __init__(self,classes=1000):
-        super(ZFNet,self).__init__()
 
-        self.conv1 = nn.Conv2d(3,96,
-                            kernel_size=7,
-                            stride=2,
-                            padding=1)
+    def __init__(self, classes=1000):
+        super(ZFNet, self).__init__()
+
+        self.conv1 = nn.Conv2d(3, 96,
+                               kernel_size=7,
+                               stride=2,
+                               padding=1)
 
         self.relu1 = nn.ReLU()
-        self.max_pool1 = nn.MaxPool2d(kernel_size=3,stride=2,padding=1)
+        self.max_pool1 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
-        self.conv2 = nn.Conv2d(96,256,
-                            kernel_size=5,
-                            stride=2,
-                            padding=0)
+        self.conv2 = nn.Conv2d(96, 256,
+                               kernel_size=5,
+                               stride=2,
+                               padding=0)
         self.relu2 = nn.ReLU()
-        self.max_pool2 = nn.MaxPool2d(kernel_size=3,stride=2,padding=1)
+        self.max_pool2 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
-        self.conv3 = nn.Conv2d(256,384,
-                            kernel_size=3,
-                            stride=1,
-                            padding=1)
+        self.conv3 = nn.Conv2d(256, 384,
+                               kernel_size=3,
+                               stride=1,
+                               padding=1)
         self.relu3 = nn.ReLU()
 
-        self.conv4 = nn.Conv2d(384,384,
-                            kernel_size=3,
-                            stride=1,
-                            padding=1)
+        self.conv4 = nn.Conv2d(384, 384,
+                               kernel_size=3,
+                               stride=1,
+                               padding=1)
         self.relu4 = nn.ReLU()
 
-        self.conv5 = nn.Conv2d(384,256,
-                            kernel_size=3,
-                            stride=1,
-                            padding=1)
+        self.conv5 = nn.Conv2d(384, 256,
+                               kernel_size=3,
+                               stride=1,
+                               padding=1)
         self.relu5 = nn.ReLU()
-        self.max_pool3 = nn.MaxPool2d(kernel_size=3,stride=2)
+        self.max_pool3 = nn.MaxPool2d(kernel_size=3, stride=2)
 
-        self.dense1 = nn.Linear(6*6*256,4096)
+        self.dense1 = nn.Linear(6 * 6 * 256, 4096)
         self.drop1 = nn.Dropout2d()
-        self.dense2 = nn.Linear(4096,4096)
+        self.dense2 = nn.Linear(4096, 4096)
         self.drop2 = nn.Dropout2d()
-        self.dense3 = nn.Linear(4096,classes)
-
+        self.dense3 = nn.Linear(4096, classes)
 
     def forward(self, x):
         x = self.conv1(x)

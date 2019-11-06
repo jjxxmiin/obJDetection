@@ -13,20 +13,25 @@ class Residual(nn.Module):
     def __init__(self, in_planes, planes, stride=1):
         super(Residual, self).__init__()
         self.layer1 = conv_bn_relu(in_planes, planes,
-                               kernel_size=3, stride=stride,
-                               padding=1, bias=False)
+                                   kernel_size=3, stride=stride,
+                                   padding=1, bias=False)
 
         self.layer2 = conv_bn(planes, planes,
-                          kernel_size=3,
-                          padding=1, bias=False)
+                              kernel_size=3,
+                              padding=1, bias=False)
 
         self.shortcut = nn.Sequential()
 
         # down sampling
         if stride != 1 or in_planes != self.expansion * planes:
             self.shortcut = nn.Sequential(
-                conv_bn(in_planes, self.expansion * planes, kernel_size=1, stride=stride, bias=False)
-            )
+                conv_bn(
+                    in_planes,
+                    self.expansion *
+                    planes,
+                    kernel_size=1,
+                    stride=stride,
+                    bias=False))
         self.relu = nn.ReLU()
 
     def forward(self, x):
@@ -180,4 +185,3 @@ class hourglassNet(nn.Module):
         x = self.conv(x)
 
         return x
-

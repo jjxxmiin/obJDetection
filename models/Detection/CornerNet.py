@@ -2,12 +2,12 @@ import torch.nn as nn
 from models.Feature.Hourglass import hourglassNet
 from models.module.corner_pooling import *
 from models.module.layer import conv_bn, conv_bn_relu
-from utils.tester import model_test
+from utils.tester import model_summary
 
 
 class CornerNet(nn.Module):
     def __init__(self, classes=80):
-        super(CornerNet,self).__init__()
+        super(CornerNet, self).__init__()
         self.backbone = hourglassNet()
 
         # pool
@@ -17,40 +17,40 @@ class CornerNet(nn.Module):
         self.rp = right_pool()
 
         # top
-        self.t_conv = conv_bn_relu(256,256,kernel_size=3,padding=1)
-        self.l_conv = conv_bn_relu(256,256,kernel_size=3,padding=1)
-        self.tl_conv = conv_bn(256,256,kernel_size=3,padding=1)
+        self.t_conv = conv_bn_relu(256, 256, kernel_size=3, padding=1)
+        self.l_conv = conv_bn_relu(256, 256, kernel_size=3, padding=1)
+        self.tl_conv = conv_bn(256, 256, kernel_size=3, padding=1)
 
-        self.conv_bn_1x1_tl = conv_bn(256,256,kernel_size=1)
+        self.conv_bn_1x1_tl = conv_bn(256, 256, kernel_size=1)
 
         self.out_tl = nn.Sequential(
             nn.ReLU(),
-            conv_bn_relu(256,256,kernel_size=3,padding=1)
+            conv_bn_relu(256, 256, kernel_size=3, padding=1)
         )
 
-        self.h_tl = conv_bn(256,256,kernel_size=3,padding=1)
-        self.e_tl = conv_bn(256,256,kernel_size=3,padding=1)
-        self.o_tl = conv_bn(256,256,kernel_size=3,padding=1)
+        self.h_tl = conv_bn(256, 256, kernel_size=3, padding=1)
+        self.e_tl = conv_bn(256, 256, kernel_size=3, padding=1)
+        self.o_tl = conv_bn(256, 256, kernel_size=3, padding=1)
 
-        self.out_h_tl = nn.Conv2d(256,classes,kernel_size=1)
+        self.out_h_tl = nn.Conv2d(256, classes, kernel_size=1)
         self.out_e_tl = nn.Conv2d(256, 1, kernel_size=1)
         self.out_o_tl = nn.Conv2d(256, 2, kernel_size=1)
 
         # bottom
-        self.b_conv = conv_bn_relu(256,256,kernel_size=3,padding=1)
-        self.r_conv = conv_bn_relu(256,256,kernel_size=3,padding=1)
-        self.br_conv = conv_bn(256,256,kernel_size=3,padding=1)
+        self.b_conv = conv_bn_relu(256, 256, kernel_size=3, padding=1)
+        self.r_conv = conv_bn_relu(256, 256, kernel_size=3, padding=1)
+        self.br_conv = conv_bn(256, 256, kernel_size=3, padding=1)
 
-        self.conv_bn_1x1_br = conv_bn(256,256,kernel_size=1)
+        self.conv_bn_1x1_br = conv_bn(256, 256, kernel_size=1)
 
         self.out_br = nn.Sequential(
             nn.ReLU(),
-            conv_bn_relu(256,256,kernel_size=3,padding=1)
+            conv_bn_relu(256, 256, kernel_size=3, padding=1)
         )
 
-        self.h_br = conv_bn(256, 256, kernel_size=3,padding=1)
-        self.e_br = conv_bn(256, 256, kernel_size=3,padding=1)
-        self.o_br = conv_bn(256, 256, kernel_size=3,padding=1)
+        self.h_br = conv_bn(256, 256, kernel_size=3, padding=1)
+        self.e_br = conv_bn(256, 256, kernel_size=3, padding=1)
+        self.o_br = conv_bn(256, 256, kernel_size=3, padding=1)
 
         self.out_h_br = nn.Conv2d(256, classes, kernel_size=1)
         self.out_e_br = nn.Conv2d(256, 1, kernel_size=1)
@@ -84,9 +84,8 @@ class CornerNet(nn.Module):
 
         return [heat_tl, embed_tl, off_tl, heat_br, embed_br, off_br]
 
-'''
+
 # test
 
-tester = model_test(CornerNet())
+tester = model_summary(CornerNet())
 tester.summary((3, 511, 511))
-'''

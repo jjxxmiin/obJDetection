@@ -183,7 +183,12 @@ class top_pool(torch.autograd.Function):
             # width * channel
             cmp_tmp = torch.cat((in_, out_), 1).max(1)[0]
 
-            output.select(2, height - idx - 1).copy_(cmp_tmp.view_as(input_tmp))
+            output.select(
+                2,
+                height -
+                idx -
+                1).copy_(
+                cmp_tmp.view_as(input_tmp))
 
         return output
 
@@ -213,7 +218,12 @@ class top_pool(torch.autograd.Function):
             # width * channel
             cmp_tmp = torch.cat((in_, out_), 1).max(1)[0]
 
-            output.select(2, height - idx - 1).copy_(cmp_tmp.view_as(input_tmp))
+            output.select(
+                2,
+                height -
+                idx -
+                1).copy_(
+                cmp_tmp.view_as(input_tmp))
 
             # grad
             grad_tmp = grad.select(2, (height - 1) - idx)

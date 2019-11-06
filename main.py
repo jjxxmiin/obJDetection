@@ -17,7 +17,7 @@ else:
 
 dataset = 'VOC'
 
-custom_transform = augment.Compose([augment.Resize((511,511)),
+custom_transform = augment.Compose([augment.Resize((511, 511)),
                                     augment.ToTensor()])
 
 if dataset == 'COCO':
@@ -32,10 +32,11 @@ if dataset == 'COCO':
                               torch_transform=None,
                               custom_transform=custom_transform)
 
-    custom_loader = torch.utils.data.DataLoader(dataset=custom_coco,
-                                                     batch_size=32,
-                                                     shuffle=True,
-                                                     collate_fn=augment.custom_collate)
+    custom_loader = torch.utils.data.DataLoader(
+        dataset=custom_coco,
+        batch_size=32,
+        shuffle=True,
+        collate_fn=augment.custom_collate)
 
 if dataset == 'VOC':
     year = '2007'
@@ -44,12 +45,17 @@ if dataset == 'VOC':
     ann_path = './datasets/voc/VOC{}/Annotations'.format(year)
     split_path = './datasets/voc/VOC{}/ImageSets/Main'.format(year)
 
-    custom_voc = VocDataset(img_path,ann_path,torch_transform=None,custom_transform=custom_transform)
+    custom_voc = VocDataset(
+        img_path,
+        ann_path,
+        torch_transform=None,
+        custom_transform=custom_transform)
 
-    custom_loader = torch.utils.data.DataLoader(dataset=custom_voc,
-                                                     batch_size=2,
-                                                     shuffle=True,
-                                                     collate_fn=augment.custom_collate)
+    custom_loader = torch.utils.data.DataLoader(
+        dataset=custom_voc,
+        batch_size=2,
+        shuffle=True,
+        collate_fn=augment.custom_collate)
 
 net = CornerNet().to(device)
 optimizer = optim.Adam(net.parameters(), lr=0.0025)
@@ -58,7 +64,8 @@ for i, data in enumerate(custom_loader):
     images = data[0].to(device)
     targets = [target.to(device) for target in data[1]]
 
-    outputs = net(images) # list : [heat_tl, embed_tl, off_tl, heat_br, embed_br, off_br]
+    # list : [heat_tl, embed_tl, off_tl, heat_br, embed_br, off_br]
+    outputs = net(images)
 
     print(outputs)
     break

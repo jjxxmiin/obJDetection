@@ -9,7 +9,15 @@ import torch.nn as nn
 
 
 class Inceptionv1(nn.Module):
-    def __init__(self, in_planes, n1x1, n3x3red, n3x3, n5x5red, n5x5, pool_planes):
+    def __init__(
+            self,
+            in_planes,
+            n1x1,
+            n3x3red,
+            n3x3,
+            n5x5red,
+            n5x5,
+            pool_planes):
         super(Inceptionv1, self).__init__()
         # 1x1 conv branch
         self.branch1 = nn.Sequential(
@@ -54,7 +62,7 @@ class Inceptionv1(nn.Module):
         y2 = self.branch2(x)
         y3 = self.branch3(x)
         y4 = self.branch4(x)
-        return torch.cat([y1,y2,y3,y4], 1)
+        return torch.cat([y1, y2, y3, y4], 1)
 
 
 class GoogLeNet(nn.Module):
@@ -66,15 +74,15 @@ class GoogLeNet(nn.Module):
             nn.ReLU(True),
         )
 
-        self.a3 = Inceptionv1(192,  64,  96, 128, 16, 32, 32)
+        self.a3 = Inceptionv1(192, 64, 96, 128, 16, 32, 32)
         self.b3 = Inceptionv1(256, 128, 128, 192, 32, 96, 64)
 
         self.maxpool = nn.MaxPool2d(3, stride=2, padding=1)
 
-        self.a4 = Inceptionv1(480, 192,  96, 208, 16,  48,  64)
-        self.b4 = Inceptionv1(512, 160, 112, 224, 24,  64,  64)
-        self.c4 = Inceptionv1(512, 128, 128, 256, 24,  64,  64)
-        self.d4 = Inceptionv1(512, 112, 144, 288, 32,  64,  64)
+        self.a4 = Inceptionv1(480, 192, 96, 208, 16, 48, 64)
+        self.b4 = Inceptionv1(512, 160, 112, 224, 24, 64, 64)
+        self.c4 = Inceptionv1(512, 128, 128, 256, 24, 64, 64)
+        self.d4 = Inceptionv1(512, 112, 144, 288, 32, 64, 64)
         self.e4 = Inceptionv1(528, 256, 160, 320, 32, 128, 128)
 
         self.a5 = Inceptionv1(832, 256, 160, 320, 32, 128, 128)

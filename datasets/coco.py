@@ -14,6 +14,7 @@ img_path = '{}/{}'.format(dataDir, dataType)
 ann_path = '{}/annotations/instances_{}.json'.format(dataDir, dataType)
 label_path = 'coco_labels.txt'
 
+
 class CocoDataset(data.Dataset):
     def __init__(self,
                  img_path,
@@ -58,12 +59,12 @@ class CocoDataset(data.Dataset):
 
         # transform
         if self.custom_transform is not None:
-            img, boxes, labels = self.custom_transform(img, target[:, :4], target[:, 4])
+            img, boxes, labels = self.custom_transform(
+                img, target[:, :4], target[:, 4])
             target = np.hstack((boxes, np.expand_dims(labels, axis=1)))
 
         if self.torch_transform is not None:
             img = self.torch_transform(img)
-
 
         return img, target
 
@@ -93,11 +94,12 @@ class CocoDataset(data.Dataset):
     def parse_label(self, label_path):
         coco_map = {}
 
-        with open(label_path,'r') as f:
+        with open(label_path, 'r') as f:
             for i, line in enumerate(f):
                 coco_map[i] = line[:-1]
 
         return coco_map
+
 
 '''
 # test

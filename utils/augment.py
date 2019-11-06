@@ -14,6 +14,7 @@ class Compose(object):
 
         return image, boxes, labels
 
+
 class ToTensor(object):
     def __call__(self, image, boxes=None, labels=None):
         '''
@@ -26,6 +27,7 @@ class ToTensor(object):
         image = torch.from_numpy(image).permute((2, 0, 1))
 
         return image, boxes, labels
+
 
 class Resize(object):
     def __init__(self, output_size):
@@ -57,6 +59,7 @@ class Resize(object):
         boxes_trans = boxes * [scale_w, scale_h, scale_w, scale_h]
 
         return image_trans, boxes_trans, labels
+
 
 def custom_collate(batch):
     '''

@@ -25,6 +25,7 @@ img_path = './datasets/voc/VOC{}/JPEGImages'.format(year)
 ann_path = './datasets/voc/VOC{}/Annotations'.format(year)
 split_path = './datasets/voc/VOC{}/ImageSets/Main'.format(year)
 
+
 class VocDataset(data.Dataset):
     def __init__(self,
                  img_path,
@@ -67,7 +68,8 @@ class VocDataset(data.Dataset):
 
         # transform
         if self.custom_transform is not None:
-            img, boxes, labels = self.custom_transform(img, target[:, :4], target[:, 4])
+            img, boxes, labels = self.custom_transform(
+                img, target[:, :4], target[:, 4])
             target = np.hstack((boxes, np.expand_dims(labels, axis=1)))
 
         if self.torch_transform is not None:
@@ -102,6 +104,7 @@ class VocDataset(data.Dataset):
             res.append([xmin, ymin, xmax, ymax, c_id])
 
         return np.array(res)
+
 
 '''
 # main test
