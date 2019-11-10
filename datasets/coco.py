@@ -6,14 +6,14 @@ import skimage.io as io
 import torch
 import torch.utils.data as data
 from pycocotools.coco import COCO
-
+'''
 dataDir = 'coco'
 dataType = 'train2017'
 
 img_path = '{}/{}'.format(dataDir, dataType)
 ann_path = '{}/annotations/instances_{}.json'.format(dataDir, dataType)
 label_path = 'coco_labels.txt'
-
+'''
 
 class CocoDataset(data.Dataset):
     def __init__(self,

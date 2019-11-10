@@ -40,22 +40,7 @@ datasets
         ---- val2017
 ```
 
-# python coding RULE
-```
-ClassName
-ExceptionName
 
-module_name
-package_name
-method_name
-function_name
-function_parameter_name
-global_var_name
-local_var_name
-instance_var_name
-
-GLOBAL_CONSTANT_NAME
-```
 
 # Object Detection
 
@@ -72,10 +57,6 @@ GLOBAL_CONSTANT_NAME
 ## Pytorch
 - [https://pytorch.org/docs/stable/index.html](https://pytorch.org/docs/stable/index.html)
 - [https://github.com/amdegroot/ssd.pytorch](https://github.com/amdegroot/ssd.pytorch)
-
-## Project Util
-- [yapf](https://github.com/google/yapf)
-- [isort](https://github.com/timothycrosley/isort)
 
 # LICENSE
 [MIT LICENSE](https://github.com/jjeamin/JDetection/blob/master/LICENSE)

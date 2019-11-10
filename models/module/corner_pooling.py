@@ -1,6 +1,3 @@
-'''
-REFERENCE : https://github.com/feifeiwei/Pytorch-CornerNet/blob/master/module/corner_pooling.py
-'''
 import torch
 
 

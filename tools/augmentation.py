@@ -1,8 +1,6 @@
 import numpy as np
 from skimage.transform import resize
-
 import torch
-
 
 class Compose(object):
     def __init__(self, transforms):
@@ -59,20 +57,3 @@ class Resize(object):
         boxes_trans = boxes * [scale_w, scale_h, scale_w, scale_h]
 
         return image_trans, boxes_trans, labels
-
-
-def custom_collate(batch):
-    '''
-    :param batch: init batch
-    :return:
-    images : (tensor)
-    targets : (list) [(tensor), (tensor)]
-    '''
-    targets = []
-    images = []
-
-    for sample in batch:
-        images.append(sample[0])
-        targets.append(torch.from_numpy(sample[1]))
-
-    return torch.stack(images, 0), targets

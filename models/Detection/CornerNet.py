@@ -1,8 +1,11 @@
+'''
+REFERENCE : https://github.com/feifeiwei/Pytorch-CornerNet
+'''
+
 import torch.nn as nn
 from models.Feature.Hourglass import hourglassNet
 from models.module.corner_pooling import *
-from models.module.layer import conv_bn, conv_bn_relu
-from utils.tester import model_summary
+from tools.layer import conv_bn, conv_bn_relu
 
 
 class CornerNet(nn.Module):
@@ -82,10 +85,12 @@ class CornerNet(nn.Module):
         embed_br = self.out_e_br(self.e_br(out_br))
         off_br = self.out_o_br(self.o_br(out_br))
 
-        return [heat_tl, embed_tl, off_tl, heat_br, embed_br, off_br]
+        return [heat_tl, heat_br, off_tl, off_br, embed_tl, embed_br]
 
+'''
+from utils.tester import model_summary
 
 # test
-
 tester = model_summary(CornerNet())
 tester.summary((3, 511, 511))
+'''
