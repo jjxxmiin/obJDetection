@@ -15,7 +15,6 @@ class model_summary:
         net = self.model.to(self.device)
         summary(net, input)
 
-
 def save_tensor_image(image, file_name='test'):
     '''
     :param image: (tensor) cpu image

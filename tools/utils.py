@@ -8,7 +8,6 @@ def gaussian2D(shape, sigma=1):
     h[h < np.finfo(h.dtype).eps * h.max()] = 0
     return h
 
-
 def draw_gaussian(heatmap, center, radius, k=1):
     heatmap1 = heatmap.numpy()
     diameter = 2 * radius + 1

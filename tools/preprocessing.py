@@ -20,7 +20,7 @@ class CornerNet_Processing():
         self.image_size = 512
         self.output_size = 128
         self.max_selection = 100
-        self.num_class = 80
+        self.num_class = 20
         self.output_stride = 4
 
     def augment(self):
@@ -65,7 +65,7 @@ class CornerNet_Processing():
         tl_offset = torch.zeros((batch_size, self.max_selection, 2))
         br_offset = torch.zeros((batch_size, self.max_selection, 2))
 
-        embedding_mask = torch.zeros((batch_size, self.max_selection, 1))
+        embedding_mask = torch.zeros((batch_size, self.max_selection,))
         embedding_lens = torch.zeros((batch_size,))
 
         for b in range(batch_size):
@@ -93,12 +93,13 @@ class CornerNet_Processing():
                 draw_gaussian(br_heatmap[b, int(label)], (shift_br_x, shift_br_y), radius)
 
                 embedding_id = embedding_lens[b].long().item()
-
+                # offset, embedding 의 위치를 설정해서 넣어준다.
                 tl_offset[b, embedding_id, :] = torch.Tensor([tl_x - shift_tl_x, tl_y - shift_tl_y])
                 br_offset[b, embedding_id, :] = torch.Tensor([br_x - shift_br_x, br_y - shift_br_y])
-                tl_embedding[b,embedding_id] = shift_tl_y * 128 + shift_tl_x
-                br_embedding[b,embedding_id] = shift_br_y * 128 + shift_br_x
-
+                # 임베딩 값 why??
+                tl_embedding[b,embedding_id] = shift_tl_y * self.output_size + shift_tl_x
+                br_embedding[b,embedding_id] = shift_br_y * self.output_size + shift_br_x
+                # box의 개수
                 embedding_lens[b] += 1
 
             for b in range(batch_size):
