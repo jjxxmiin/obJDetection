@@ -26,7 +26,6 @@ def comp(a, b, A, B):
 
     return res
 
-
 # customize grad function
 class left_pool(torch.autograd.Function):
 
@@ -56,6 +55,7 @@ class left_pool(torch.autograd.Function):
 
     def backward(self, grad_output):
         x = self.saved_tensors
+        x = x[0]
         output = torch.zeros_like(x)
         batch = x.size(0)
         width = x.size(3)
@@ -94,7 +94,6 @@ class left_pool(torch.autograd.Function):
 
 
 class right_pool(torch.autograd.Function):
-
     def forward(self, x):
         self.save_for_backward(x.clone())
         output = torch.zeros_like(x)
@@ -121,6 +120,7 @@ class right_pool(torch.autograd.Function):
 
     def backward(self, grad_output):
         x = self.saved_tensors
+        x = x[0]
         output = torch.zeros_like(x)
         batch = x.size(0)
         width = x.size(3)
@@ -191,6 +191,7 @@ class top_pool(torch.autograd.Function):
 
     def backward(self, grad_output):
         x = self.saved_tensors
+        x = x[0]
         output = torch.zeros_like(x)
         batch = x.size(0)
         height = x.size(2)
@@ -261,6 +262,7 @@ class bottom_pool(torch.autograd.Function):
 
     def backward(self, grad_output):
         x = self.saved_tensors
+        x = x[0]
         output = torch.zeros_like(x)
         batch = x.size(0)
         height = x.size(2)
