@@ -40,6 +40,8 @@ datasets
         ---- val2017
 ```
 
+# Model Reference
+- CornerNet : [https://github.com/feifeiwei/Pytorch-CornerNet](https://github.com/feifeiwei/Pytorch-CornerNet)
 
 
 # Object Detection
