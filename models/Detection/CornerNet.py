@@ -13,12 +13,6 @@ class CornerNet(nn.Module):
         super(CornerNet, self).__init__()
         self.backbone = hourglassNet()
 
-        # pool
-        self.tp = top_pool()
-        self.lp = left_pool()
-        self.bp = bottom_pool()
-        self.rp = right_pool()
-
         # top
         self.t_conv = conv_bn_relu(256, 256, kernel_size=3, padding=1)
         self.l_conv = conv_bn_relu(256, 256, kernel_size=3, padding=1)
@@ -61,8 +55,10 @@ class CornerNet(nn.Module):
 
     def forward(self, x):
         x = self.backbone(x)
-        top = self.tp(self.t_conv(x))
-        left = self.lp(self.l_conv(x))
+        t = self.t_conv(x)
+        l = self.l_conv(x)
+        top = top_pool()(t)
+        left = left_pool()(l)
         top_left = self.tl_conv(top + left)
 
         conv_bn_tl = self.conv_bn_1x1_tl(x)
@@ -73,8 +69,10 @@ class CornerNet(nn.Module):
         embed_tl = self.out_e_tl(self.e_tl(out_tl))
         off_tl = self.out_o_tl(self.o_tl(out_tl))
 
-        bottom = self.bp(self.b_conv(x))
-        right = self.rp(self.r_conv(x))
+        b = self.b_conv(x)
+        r = self.r_conv(x)
+        bottom = bottom_pool()(b)
+        right = right_pool()(r)
         bottom_right = self.br_conv(bottom + right)
 
         conv_bn_br = self.conv_bn_1x1_br(x)
