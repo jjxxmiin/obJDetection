@@ -2,9 +2,9 @@ import torch.nn as nn
 
 
 class LRN(nn.Module):
-    '''
+    """
     Local Response Normalization
-    '''
+    """
 
     def __init__(self, kernel_size, alpha, beta):
         super(LRN, self).__init__()
@@ -27,9 +27,9 @@ class LRN(nn.Module):
 
 class AlexNet(nn.Module):
     def __init__(self, classes=1000):
-        '''
+        """
         GPU : 2
-        '''
+        """
         super(AlexNet, self).__init__()
 
         self.conv1 = nn.Conv2d(in_channels=3,
@@ -90,12 +90,6 @@ class AlexNet(nn.Module):
         self.dense3 = nn.Linear(4096, classes)
 
     def forward(self, x):
-        '''
-        C : convolution
-        A : relu
-        P : overlapping pooling
-        F : fully connected
-        '''
         x = self.conv1(x)
         x = self.relu1(x)
         x = self.max_pool1(x)

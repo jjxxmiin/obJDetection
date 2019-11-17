@@ -1,10 +1,5 @@
-'''
-downsampling : stride = 2
-channels : 256,384,384,384,512
-'''
-
 import torch.nn as nn
-from tools.layer import conv_bn, conv_bn_relu
+from models.module.layer import Conv_bn, Conv_bn_relu
 
 
 class Residual(nn.Module):
@@ -12,11 +7,11 @@ class Residual(nn.Module):
 
     def __init__(self, in_planes, planes, stride=1):
         super(Residual, self).__init__()
-        self.layer1 = conv_bn_relu(in_planes, planes,
+        self.layer1 = Conv_bn_relu(in_planes, planes,
                                    kernel_size=3, stride=stride,
                                    padding=1, bias=False)
 
-        self.layer2 = conv_bn(planes, planes,
+        self.layer2 = Conv_bn(planes, planes,
                               kernel_size=3,
                               padding=1, bias=False)
 
@@ -25,7 +20,7 @@ class Residual(nn.Module):
         # down sampling
         if stride != 1 or in_planes != self.expansion * planes:
             self.shortcut = nn.Sequential(
-                conv_bn(
+                Conv_bn(
                     in_planes,
                     self.expansion *
                     planes,
@@ -67,6 +62,10 @@ def up_sampling(planes):
 
 class hourglassModule(nn.Module):
     def __init__(self):
+        """
+        downsampling : stride = 2
+        channels : 256,384,384,384,512
+        """
         super(hourglassModule, self).__init__()
 
         # hourglass down sampling
@@ -149,19 +148,19 @@ class hourglassNet(nn.Module):
 
         # hourglass input
         self.pre_conv = nn.Sequential(
-            conv_bn_relu(3, 128, kernel_size=7, stride=2, padding=2),
+            Conv_bn_relu(3, 128, kernel_size=7, stride=2, padding=2),
             Residual(128, 256, stride=2),
         )
 
         self.pre_skip = nn.Sequential(
-            conv_bn(256, 256, kernel_size=1)
+            Conv_bn(256, 256, kernel_size=1)
         )
 
         self.hourglass1 = hourglassModule()
 
         self.middle = nn.Sequential(
-            conv_bn_relu(256, 256, kernel_size=3, padding=1),
-            conv_bn(256, 256, kernel_size=1)
+            Conv_bn_relu(256, 256, kernel_size=3, padding=1),
+            Conv_bn(256, 256, kernel_size=1)
         )
 
         self.relu = nn.ReLU()

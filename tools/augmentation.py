@@ -57,3 +57,4 @@ class Resize(object):
         boxes_trans = boxes * [scale_w, scale_h, scale_w, scale_h]
 
         return image_trans, boxes_trans, labels
+

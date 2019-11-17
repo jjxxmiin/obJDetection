@@ -2,10 +2,10 @@ import torch
 import torch.nn as nn
 
 class CornerNet_Loss(nn.Module):
-    '''
+    """
     input : (List) [heat_tl, embed_tl, off_tl, heat_br, embed_br, off_br]
     output : Loss
-    '''
+    """
     def __init__(self):
         super(CornerNet_Loss, self).__init__()
         self.pull_weight = 0.1
@@ -94,14 +94,14 @@ class CornerNet_Loss(nn.Module):
         return pull, push
 
     def forward(self, true, pred):
-        '''
+        """
         [top left heatmap,
         bottom right heatmap,
         top left offset,
         bottom right offset,
         top left embedding,
         bottom right embedding]
-        '''
+        """
         mask = true[-1]
 
         true_tl_heatmap = true[0]
@@ -139,7 +139,3 @@ class CornerNet_Loss(nn.Module):
         loss = (det_loss + pull_loss + push_loss + offset_loss) / len(true_tl_heatmap)
 
         return loss, [det_loss.item(), offset_loss.item(), pull_loss.item(), push_loss.item()]
-
-
-
-

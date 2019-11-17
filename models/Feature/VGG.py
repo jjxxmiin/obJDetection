@@ -1,16 +1,13 @@
 import torch.nn as nn
 
-# torch.nn.Conv2d(in_channels, out_channels, kernel_size, stride=1, padding=0, dilation=1, groups=1, bias=True, padding_mode='zeros')
-
-
 class VGG(nn.Module):
     def __init__(self, classes=1000):
         super(VGG, self).__init__()
-        '''
+        """
         VGG 16
         layers = [2,2,3,3,3]
         chennels = [64,128,256,512,512]
-        '''
+        """
         self.vgg16 = nn.Sequential(
             nn.Conv2d(3, 64, kernel_size=3, padding=1),
             nn.ReLU(),

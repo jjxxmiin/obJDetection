@@ -37,13 +37,6 @@ class LeNet5(nn.Module):
         self.output = nn.Linear(84, classes)
 
     def forward(self, x):
-        '''
-        C : convolution
-        P : average pooling
-        A : sigmoid
-        F : fully connected
-        '''
-
         x = self.conv1(x)
         x = self.sigmoid1(x)
         x = self.avg_pool1(x)

@@ -6,14 +6,6 @@ import skimage.io as io
 import torch
 import torch.utils.data as data
 from pycocotools.coco import COCO
-'''
-dataDir = 'coco'
-dataType = 'train2017'
-
-img_path = '{}/{}'.format(dataDir, dataType)
-ann_path = '{}/annotations/instances_{}.json'.format(dataDir, dataType)
-label_path = 'coco_labels.txt'
-'''
 
 class CocoDataset(data.Dataset):
     def __init__(self,
@@ -99,22 +91,3 @@ class CocoDataset(data.Dataset):
                 coco_map[i] = line[:-1]
 
         return coco_map
-
-
-'''
-# test
-import utils.augment as augment
-
-def test():
-    custom_coco = CocoDataset(img_path,ann_path,label_path,transform=augment.ToTensor())
-    custom_coco_loader = data.DataLoader(dataset=custom_coco,
-                                    batch_size=1,
-                                    shuffle=False)
-
-    for i ,c in enumerate(custom_coco_loader):
-        print(i)
-        print(c)
-        break
-
-test()
-'''
