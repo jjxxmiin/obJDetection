@@ -40,22 +40,3 @@ class Conv_bn(nn.Module):
 
     def forward(self, x):
         return self.relu(self.bn(self.conv(x)))
-
-
-class Deform_Conv2d(nn.Conv2d):
-    """
-    Reference
-    - https://github.com/oeway/pytorch-deform-conv/blob/5270ac7dccbbfbf4dcec12db57080e5d6449c835/torch_deform_conv/layers.py#L10
-    """
-    def __init__(self, in_planes):
-        # conv2d
-        super(Deform_Conv2d, self).__init__(in_planes,
-                                            in_planes * 2,
-                                            kernel_size=3,
-                                            padding=1,
-                                            bias=False)
-        self.in_planes = in_planes
-
-    def forward(self, x):
-        x_shape = x.size()
-        
