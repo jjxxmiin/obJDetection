@@ -23,8 +23,9 @@ class CornerNet_Processing():
         self.num_class = 20
         self.output_stride = 4
 
-    def augment(self):
-        transform = augment.Compose([augment.Resize((511, 511)),
+    @staticmethod
+    def augment():
+        transform = augment.Compose([augment.Resize((512, 256)),
                                     augment.ToTensor()])
 
         return transform

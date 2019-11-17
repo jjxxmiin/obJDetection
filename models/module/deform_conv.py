@@ -1,5 +1,5 @@
 """
-https://github.com/oeway/pytorch-deform-conv/blob/5270ac7dccbbfbf4dcec12db57080e5d6449c835/torch_deform_conv/layers.py#L10
+REFERENCE : https://github.com/oeway/pytorch-deform-conv
 """
 
 import torch
@@ -66,8 +66,8 @@ def th_batch_map_coordinates(input, coords, order=1):
 
     assert (coords.size(1) == n_coords)
 
-    coords_lt = coords.floor().long()
-    coords_rb = coords.ceil().long()
+    coords_lt = coords.floor().long() # 소수점 제거
+    coords_rb = coords.ceil().long() # 소수점 올림
     coords_lb = torch.stack([coords_lt[..., 0], coords_rb[..., 1]], 2)
     coords_rt = torch.stack([coords_rb[..., 0], coords_lt[..., 1]], 2)
     idx = th_repeat(torch.arange(0, batch_size), n_coords).long()
@@ -79,7 +79,7 @@ def th_batch_map_coordinates(input, coords, order=1):
         indices = torch.stack([
             idx, th_flatten(coords[..., 0]), th_flatten(coords[..., 1])
         ], 1)
-        inds = indices[:, 0]*input.size(1)*input.size(2)+ indices[:, 1]*input.size(2) + indices[:, 2]
+        inds = indices[:, 0]*input.size(1)*input.size(2) + indices[:, 1]*input.size(2) + indices[:, 2]
         vals = th_flatten(input).index_select(0, inds)
         vals = vals.view(batch_size, n_coords)
         return vals

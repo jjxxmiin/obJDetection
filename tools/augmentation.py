@@ -1,6 +1,6 @@
-import numpy as np
-from skimage.transform import resize
 import torch
+from skimage.transform import resize
+import cv2
 
 class Compose(object):
     def __init__(self, transforms):
@@ -15,15 +15,15 @@ class Compose(object):
 
 class ToTensor(object):
     def __call__(self, image, boxes=None, labels=None):
-        '''
+        """
         image : (numpy)
         boxes : (numpy)
         labels : (numpy)
 
-        numpy : H x W x C -> tensor : C x H x W Float32
-        '''
-        image = torch.from_numpy(image).permute((2, 0, 1))
+        numpy : W x H x C -> tensor : C x H x W Float32
+        """
 
+        image = torch.from_numpy(image).permute((2, 1, 0))
         return image, boxes, labels
 
 
@@ -33,12 +33,14 @@ class Resize(object):
         self.output_size = output_size
 
     def __call__(self, image, boxes=None, labels=None):
-        '''
-        :param image: (numpy Image)
-        :param boxes: (numpy)
-        :param labels: (numpy)
-        :return:
-        '''
+        """
+        image: (numpy Image)
+        boxes: (numpy)
+        labels: (numpy)
+        """
+
+        cv2.imwrite('test.png',image)
+        print(image.shape)
 
         h, w = image.shape[:2]
 
@@ -57,4 +59,3 @@ class Resize(object):
         boxes_trans = boxes * [scale_w, scale_h, scale_w, scale_h]
 
         return image_trans, boxes_trans, labels
-

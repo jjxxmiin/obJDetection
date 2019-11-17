@@ -1,9 +1,6 @@
 import os
-
 import numpy as np
-import skimage.io as io
-
-import torch
+import cv2
 import torch.utils.data as data
 from pycocotools.coco import COCO
 
@@ -43,7 +40,8 @@ class CocoDataset(data.Dataset):
         img_file_name = coco.loadImgs(img_id)[0]['file_name']
         img_path = os.path.join(self.img_path, img_file_name)
         # skimage is RGB
-        img = io.imread(img_path)
+        img = cv2.imread(self.imgs[index])
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
         # label
         ann_ids = coco.getAnnIds(imgIds=img_id)

@@ -5,7 +5,8 @@ import numpy as np
 from skimage import io
 
 import torch.utils.data as data
-
+import matplotlib.pyplot as plt
+import cv2
 if sys.version_info[0] == 2:
     import xml.etree.cElementTree as ET
 else:
@@ -63,7 +64,9 @@ class VocDataset(data.Dataset):
             img : (numpy Image)
             target : (numpy) [xmin,ymin,xmax,ymax,class_id]
         '''
-        img = io.imread(self.imgs[index])
+        img = cv2.imread(self.imgs[index])
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
         target = self.parse_voc(ET.parse(open(self.anns[index])).getroot())
 
         # transform

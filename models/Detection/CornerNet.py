@@ -1,6 +1,6 @@
-'''
+"""
 REFERENCE : https://github.com/feifeiwei/Pytorch-CornerNet
-'''
+"""
 
 import torch.nn as nn
 from models.Feature.Hourglass import hourglassNet

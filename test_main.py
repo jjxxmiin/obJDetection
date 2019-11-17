@@ -64,9 +64,14 @@ if configs['dataset'] == 'VOC':
     custom_loader = torch.utils.data.DataLoader(
         dataset=custom_voc,
         batch_size=configs['batch_size'],
-        shuffle=True,
-        collate_fn=preprocessing.collate)
+        shuffle=True,)
+        #collate_fn=preprocessing.collate)
 
+for i, (images, targets) in enumerate(custom_loader):
+    save_tensor_image(images[0], targets[0])
+    break
+
+'''
 net = CornerNet(classes=configs['classes']).to(device)
 optimizer = optim.Adam(net.parameters(), lr=configs['lr'])
 criterion = CornerNet_Loss()
@@ -105,4 +110,4 @@ if configs['mode'] == 'test':
     optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
     epoch = checkpoint['epoch']
     loss = checkpoint['loss']
-
+'''
