@@ -2,10 +2,8 @@ import os
 import sys
 
 import numpy as np
-from skimage import io
 
 import torch.utils.data as data
-import matplotlib.pyplot as plt
 import cv2
 if sys.version_info[0] == 2:
     import xml.etree.cElementTree as ET
@@ -107,22 +105,3 @@ class VocDataset(data.Dataset):
             res.append([xmin, ymin, xmax, ymax, c_id])
 
         return np.array(res)
-
-
-'''
-# main test
-
-import utils.augment as augment
-
-if __name__ == '__main__':
-    custom_voc = VocDataset(img_path,ann_path,transform=augment.ToTensor())
-
-    custom_voc_loader = data.DataLoader(dataset=custom_voc,
-                                    batch_size=1,
-                                    shuffle=False)
-
-    for i, c in enumerate(custom_voc_loader):
-        print(i)
-        print(c)
-        break
-'''

@@ -1,5 +1,4 @@
 import torch
-import numpy as np
 import tools.augmentation as augment
 from tools.utils import *
 
@@ -15,6 +14,7 @@ def custom_collate(batch):
 
     return torch.stack(images, 0), targets
 
+
 class CornerNet_Processing():
     def __init__(self):
         self.image_size = 512
@@ -25,7 +25,8 @@ class CornerNet_Processing():
 
     @staticmethod
     def augment():
-        transform = augment.Compose([augment.Resize((512, 256)),
+        transform = augment.Compose([augment.Resize((511, 511)),
+                                     augment.VFlip(1),
                                     augment.ToTensor()])
 
         return transform

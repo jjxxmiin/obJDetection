@@ -21,14 +21,14 @@ def save_tensor_image(image, targets):
     :return: (file) save image
     '''
 
-    image = image.permute(2, 1, 0).numpy() * 255
+    image = image.permute(1, 2, 0).numpy() * 255.0
     image = image.astype('uint8')
 
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
     for target in targets:
         target = np.floor(target)
-        image = cv2.rectangle(image,(target[0], target[1]),(target[2], target[3]), (255,0,0), 3)
+        image = cv2.rectangle(image, (target[0], target[1]), (target[2], target[3]), (255, 0, 0), 3)
 
     cv2.imwrite('test.png', image)
 
