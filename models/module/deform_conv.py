@@ -62,12 +62,12 @@ def th_batch_map_coordinates(input, coords, order=1):
 
     # coords = torch.clamp(coords, 0, input_size - 1)
 
-    coords = torch.cat((torch.clamp(coords.narrow(2, 0, 1), 0, input_height - 1), torch.clamp(coords.narrow(2, 1, 1), 0, input_width - 1)), 2)
+    coords = torch.cat((torch.clamp(coords.narrow(2, 0, 1), 0, input_height - 1), torch.clamp(coords.narrow(2, 1, 1), 0, input_width-1)), 2)
 
     assert (coords.size(1) == n_coords)
 
-    coords_lt = coords.floor().long() # 소수점 제거
-    coords_rb = coords.ceil().long() # 소수점 올림
+    coords_lt = coords.floor().long()  # 소수점 제거
+    coords_rb = coords.ceil().long()  # 소수점 올림
     coords_lb = torch.stack([coords_lt[..., 0], coords_rb[..., 1]], 2)
     coords_rt = torch.stack([coords_rb[..., 0], coords_lt[..., 1]], 2)
     idx = th_repeat(torch.arange(0, batch_size), n_coords).long()
@@ -79,7 +79,7 @@ def th_batch_map_coordinates(input, coords, order=1):
         indices = torch.stack([
             idx, th_flatten(coords[..., 0]), th_flatten(coords[..., 1])
         ], 1)
-        inds = indices[:, 0]*input.size(1)*input.size(2) + indices[:, 1]*input.size(2) + indices[:, 2]
+        inds = indices[:,0] * input.size(1) * input.size(2) + indices[:, 1] * input.size(2) + indices[:, 2]
         vals = th_flatten(input).index_select(0, inds)
         vals = vals.view(batch_size, n_coords)
         return vals
@@ -90,9 +90,9 @@ def th_batch_map_coordinates(input, coords, order=1):
     vals_rt = _get_vals_by_coords(input, coords_rt.detach())
 
     coords_offset_lt = coords - coords_lt.type(coords.data.type())
-    vals_t = coords_offset_lt[..., 0]*(vals_rt - vals_lt) + vals_lt
-    vals_b = coords_offset_lt[..., 0]*(vals_rb - vals_lb) + vals_lb
-    mapped_vals = coords_offset_lt[..., 1]* (vals_b - vals_t) + vals_t
+    vals_t = coords_offset_lt[..., 0] * (vals_rt - vals_lt) + vals_lt
+    vals_b = coords_offset_lt[..., 0] * (vals_rb - vals_lb) + vals_lb
+    mapped_vals = coords_offset_lt[..., 1] * (vals_b - vals_t) + vals_t
     return mapped_vals
 
 
@@ -112,7 +112,12 @@ def th_batch_map_offsets(input, offsets, grid=None, order=1):
 
     offsets = offsets.view(batch_size, -1, 2)
     if grid is None:
-        grid = th_generate_grid(batch_size, input_height, input_width, offsets.data.type(), offsets.data.is_cuda)
+        grid = th_generate_grid(
+            batch_size,
+            input_height,
+            input_width,
+            offsets.data.type(),
+            offsets.data.is_cuda)
 
     coords = offsets + grid
 
@@ -132,7 +137,7 @@ class Deform_Conv2d(nn.Conv2d):
 
     def forward(self, x):
         x_shape = x.size()
-        offsets = super(Deform_Conv2d, self).forward(x) # conv2d forward
+        offsets = super(Deform_Conv2d, self).forward(x)  # conv2d forward
 
         # b*c, h, w, 2
         offsets = offsets.contiguous().view(-1, int(x_shape[2]), int(x_shape[3]), 2)
@@ -140,7 +145,8 @@ class Deform_Conv2d(nn.Conv2d):
         x = x.contiguous().view(-1, int(x_shape[2]), int(x_shape[3]))
 
         # X_offset: (b*c, h, w)
-        x_offset = th_batch_map_offsets(x, offsets, grid=self._get_grid(self, x))
+        x_offset = th_batch_map_offsets(
+            x, offsets, grid=self._get_grid(self, x))
 
         # x_offset: (b, h, w, c)
         x_offset = self._to_b_c_h_w(x_offset, x_shape)
@@ -151,7 +157,12 @@ class Deform_Conv2d(nn.Conv2d):
     def _get_grid(self, x):
         batch_size, input_height, input_width = x.size(0), x.size(1), x.size(2)
         dtype, cuda = x.data.type(), x.data.is_cuda
-        if self._grid_param == (batch_size, input_height, input_width, dtype, cuda):
+        if self._grid_param == (
+                batch_size,
+                input_height,
+                input_width,
+                dtype,
+                cuda):
             return self._grid
         self._grid_param = (batch_size, input_height, input_width, dtype, cuda)
         self._grid = th_generate_grid(batch_size, input_height, input_width, dtype, cuda)

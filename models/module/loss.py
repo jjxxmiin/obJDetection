@@ -1,11 +1,13 @@
 import torch
 import torch.nn as nn
 
+
 class CornerNet_Loss(nn.Module):
     """
     input : (List) [heat_tl, embed_tl, off_tl, heat_br, embed_br, off_br]
     output : Loss
     """
+
     def __init__(self):
         super(CornerNet_Loss, self).__init__()
         self.pull_weight = 0.1
@@ -25,8 +27,8 @@ class CornerNet_Loss(nn.Module):
         return pred
 
     def focal_loss(self, true, pred, alpha=2, beta=4):
-        pos_true = true.eq(1) # = 1
-        neg_true = true.lt(1) # < 1
+        pos_true = true.eq(1)  # = 1
+        neg_true = true.lt(1)  # < 1
 
         loss = 0
 
@@ -54,8 +56,8 @@ class CornerNet_Loss(nn.Module):
 
         mask = mask.unsqueeze(2).expand_as(true)
 
-        pred = pred[mask==1]
-        true = true[mask==1]
+        pred = pred[mask == 1]
+        true = true[mask == 1]
 
         loss = nn.functional.smooth_l1_loss(pred, true, size_average=False)
         loss = loss / (num + 1e-4)
@@ -65,12 +67,12 @@ class CornerNet_Loss(nn.Module):
     def triplet_loss(self, tl, br, mask):
         num = mask.sum(dim=1, keepdim=True).unsqueeze(1).expand_as(tl)
 
-        mask = mask.unsqueeze(2) # 1,100,1
+        mask = mask.unsqueeze(2)  # 1,100,1
 
-        ek = (tl+br) / 2
+        ek = (tl + br) / 2
 
         tl = torch.pow(tl - ek, 2) / (num + 1e-4)
-        tl = (tl*mask).sum()
+        tl = (tl * mask).sum()
 
         br = torch.pow(br - ek, 2) / (num + 1e-4)
         br = (br * mask).sum()
@@ -120,15 +122,17 @@ class CornerNet_Loss(nn.Module):
         pred_br_embedding = pred[5]
 
         # heatmap
-        det_loss = self.focal_loss(true_tl_heatmap, pred_tl_heatmap) + self.focal_loss(true_br_heatmap, pred_br_heatmap)
+        det_loss = self.focal_loss(true_tl_heatmap,  pred_tl_heatmap) \
+                   + self.focal_loss(true_br_heatmap, pred_br_heatmap)
+
         det_loss = det_loss * 0.5
 
         # offset
         pred_tl_offset = self.trans_output(true_tl_embedding, pred_tl_offset)
         pred_br_offset = self.trans_output(true_br_embedding, pred_br_offset)
 
-        offset_loss = self.offset_loss(true_tl_offset, pred_tl_offset, mask)*self.off_weight + \
-                    self.offset_loss(true_br_offset, pred_br_offset, mask)*self.off_weight
+        offset_loss = self.offset_loss(true_tl_offset, pred_tl_offset, mask) * self.off_weight \
+                      + self.offset_loss(true_br_offset, pred_br_offset, mask) * self.off_weight
 
         # embedding
         tl_embedding = self.trans_output(true_tl_embedding, pred_tl_embedding)
@@ -138,4 +142,5 @@ class CornerNet_Loss(nn.Module):
 
         loss = (det_loss + pull_loss + push_loss + offset_loss) / len(true_tl_heatmap)
 
-        return loss, [det_loss.item(), offset_loss.item(), pull_loss.item(), push_loss.item()]
+        return loss, [det_loss.item(), offset_loss.item(),
+                      pull_loss.item(), push_loss.item()]

@@ -4,7 +4,7 @@ import torch
 from torchsummary import summary
 
 
-class model_summary:
+class model_tester:
     def __init__(self, model):
         self.model = model
         self.device = torch.device(

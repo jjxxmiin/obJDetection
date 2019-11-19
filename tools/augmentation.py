@@ -52,7 +52,7 @@ class Resize(object):
         scale_w, scale_h = float(new_w) / w, float(new_h) / h
 
         image_trans = cv2.resize(image, (new_w, new_h,))
-        boxes_trans = boxes * [scale_w, scale_h, scale_w, scale_h,]
+        boxes_trans = boxes * [scale_w, scale_h, scale_w, scale_h, ]
 
         return image_trans, boxes_trans, labels
 
@@ -65,7 +65,7 @@ class HFlip(object):
         self.p = p
 
     def __call__(self, image, boxes, labels):
-        r = np.random.choice(2, 1, p=[self.p, 1-self.p])
+        r = np.random.choice(2, 1, p=[self.p, 1 - self.p])
         w = image.shape[1]
 
         if r == 0:
@@ -109,16 +109,3 @@ class VFlip(object):
             return image, boxes, labels
 
         return image_trans, boxes_trans, labels
-
-
-class Crop(object):
-    def __init__(self, p=0.5):
-        """
-        p: percent
-        """
-        self.p = p
-
-    def __call__(self, image, boxes, labels):
-        image_trans = image[]
-
-        return image_trans, boxes, labels

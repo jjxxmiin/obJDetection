@@ -2,6 +2,7 @@ import torch
 import tools.augmentation as augment
 from tools.utils import *
 
+
 def custom_collate(batch):
     '''
     :batch:
@@ -26,8 +27,7 @@ class CornerNet_Processing():
     @staticmethod
     def augment():
         transform = augment.Compose([augment.Resize((511, 511)),
-                                     augment.VFlip(1),
-                                    augment.ToTensor()])
+                                     augment.ToTensor()])
 
         return transform
 
@@ -36,7 +36,7 @@ class CornerNet_Processing():
         :batch:
         image : (tensor) image
         target : (list) [xmin,ymin,xmax,ymax,c_id]
-    
+
         :return:
         images : (tensor)
         targets : (list)
@@ -75,32 +75,34 @@ class CornerNet_Processing():
             for xmin, ymin, xmax, ymax, c_id in targets[b]:
                 label = c_id
 
-                tl_x = xmin/self.output_stride
-                tl_y = ymin/self.output_stride
-                br_x = xmax/self.output_stride
-                br_y = ymax/self.output_stride
+                tl_x = xmin / self.output_stride
+                tl_y = ymin / self.output_stride
+                br_x = xmax / self.output_stride
+                br_y = ymax / self.output_stride
 
                 shift_tl_x = int(tl_x)
                 shift_tl_y = int(tl_y)
                 shift_br_x = int(br_x)
                 shift_br_y = int(br_y)
 
-                shift_width = int((xmax - xmin)/self.output_stride)
-                shift_height = int((ymax - ymin)/self.output_stride)
+                shift_width = int((xmax - xmin) / self.output_stride)
+                shift_height = int((ymax - ymin) / self.output_stride)
 
                 radius = gaussian_radius(shift_width, shift_height)
                 radius = max(0, int(radius))
 
-                draw_gaussian(tl_heatmap[b, int(label)], (shift_tl_x, shift_tl_y), radius)
-                draw_gaussian(br_heatmap[b, int(label)], (shift_br_x, shift_br_y), radius)
+                draw_gaussian(tl_heatmap[b, int(label)],
+                              (shift_tl_x, shift_tl_y), radius)
+                draw_gaussian(br_heatmap[b, int(label)],
+                              (shift_br_x, shift_br_y), radius)
 
                 embedding_id = embedding_lens[b].long().item()
                 # offset, embedding 의 위치를 설정해서 넣어준다.
                 tl_offset[b, embedding_id, :] = torch.Tensor([tl_x - shift_tl_x, tl_y - shift_tl_y])
                 br_offset[b, embedding_id, :] = torch.Tensor([br_x - shift_br_x, br_y - shift_br_y])
                 # 임베딩 값 why??
-                tl_embedding[b,embedding_id] = shift_tl_y * self.output_size + shift_tl_x
-                br_embedding[b,embedding_id] = shift_br_y * self.output_size + shift_br_x
+                tl_embedding[b, embedding_id] = shift_tl_y * self.output_size + shift_tl_x
+                br_embedding[b, embedding_id] = shift_br_y * self.output_size + shift_br_x
                 # box의 개수
                 embedding_lens[b] += 1
 
