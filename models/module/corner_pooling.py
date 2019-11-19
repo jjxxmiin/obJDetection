@@ -27,6 +27,8 @@ def comp(a, b, A, B):
     return res
 
 # customize grad function
+
+
 class left_pool(torch.autograd.Function):
 
     def forward(self, x):

@@ -38,7 +38,8 @@ class CocoDataset(data.Dataset):
         # input image
         img_id = self.ids[index]
         img_file_name = coco.loadImgs(img_id)[0]['file_name']
-        img_path = os.path.join(self.img_path, img_file_name)
+        #img_path = os.path.join(self.img_path, img_file_name)
+
         # skimage is RGB
         img = cv2.imread(self.imgs[index])
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)

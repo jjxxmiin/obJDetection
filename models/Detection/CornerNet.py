@@ -85,6 +85,7 @@ class CornerNet(nn.Module):
 
         return [heat_tl, heat_br, off_tl, off_br, embed_tl, embed_br]
 
+
 '''
 from utils.tester import model_summary
 

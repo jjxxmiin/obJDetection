@@ -1,5 +1,6 @@
 import torch.nn as nn
 
+
 class VGG(nn.Module):
     def __init__(self, classes=1000):
         super(VGG, self).__init__()
