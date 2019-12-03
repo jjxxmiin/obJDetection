@@ -1,5 +1,6 @@
 import torch
 import tools.augmentation as augment
+import torchvision.transforms as transformer
 from tools.utils import *
 
 
@@ -10,13 +11,41 @@ def custom_collate(batch):
     images : (tensor)
     targets : (list) [(tensor), (tensor)]
     '''
-    targets = [torch.from_numpy(x[1]) for x in batch]
-    images = [x[0] for x in batch]
+    targets = []
+    images = []
+
+    for x in batch:
+        targets.append(torch.from_numpy(x[1]))
+        images.append(x[0])
 
     return torch.stack(images, 0), targets
 
 
-class CornerNet_Processing():
+class Yolo_Processing(object):
+    def __init__(self):
+        self.anchor_mask = [[6, 7, 8], [3, 4, 5], [0, 1, 2]]
+
+    @staticmethod
+    def augment(trans='custom'):
+        custom_transform = augment.Compose([augment.Resize((416, 416)),
+                                         augment.ToTensor()])
+
+        torch_transform = transformer.Compose([transformer.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]), ])
+
+        return custom_transform, torch_transform
+
+    def collate(self, batch):
+        targets = []
+        images = []
+
+        for x in batch:
+            targets.append(torch.from_numpy(x[1]))
+            images.append(x[0])
+
+        return images, targets
+
+
+class CornerNet_Processing(object):
     def __init__(self):
         self.image_size = 512
         self.output_size = 128

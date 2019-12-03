@@ -1,5 +1,5 @@
 import torch.nn as nn
-from models.module.layer import Conv_bn, Conv_bn_relu
+from models.module.layers import Conv_bn, Conv_bn_relu
 
 
 class Residual(nn.Module):

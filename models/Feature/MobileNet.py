@@ -1,5 +1,5 @@
 import torch.nn as nn
-from models.module.layer import *
+from models.module.layers import *
 from tools.tester import model_tester
 
 
@@ -36,6 +36,7 @@ class MobileNetv1(nn.Module):
         x = self.linear(x)
 
         return x
+
 
 '''
 tester = model_tester(MobileNetv1())

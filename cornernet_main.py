@@ -24,6 +24,8 @@ configs = {
     'batch_size': 1,
 }
 
+preprocessing = CornerNet_Processing()
+
 if configs['dataset'] == 'COCO':
     # classes 80
     dataDir = './datasets/coco'
@@ -32,8 +34,6 @@ if configs['dataset'] == 'COCO':
     img_path = '{}/{}'.format(dataDir, dataType)
     ann_path = '{}/annotations/instances_{}.json'.format(dataDir, dataType)
     label_path = './datasets/coco_labels.txt'
-
-    preprocessing = CornerNet_Processing()
 
     custom_coco = CocoDataset(img_path, ann_path, label_path,
                               torch_transform=None,
@@ -53,8 +53,6 @@ if configs['dataset'] == 'VOC':
     ann_path = './datasets/voc/VOC{}/Annotations'.format(year)
     split_path = './datasets/voc/VOC{}/ImageSets/Main'.format(year)
 
-    preprocessing = CornerNet_Processing()
-
     custom_voc = VocDataset(
         img_path,
         ann_path,
@@ -64,14 +62,9 @@ if configs['dataset'] == 'VOC':
     custom_loader = torch.utils.data.DataLoader(
         dataset=custom_voc,
         batch_size=configs['batch_size'],
-        shuffle=True,)
-        #collate_fn=preprocessing.collate)
+        shuffle=True,
+        collate_fn=preprocessing.collate)
 
-for i, (images, targets) in enumerate(custom_loader):
-    save_tensor_image(images[0], targets[0])
-    break
-
-'''
 net = CornerNet(classes=configs['classes']).to(device)
 optimizer = optim.Adam(net.parameters(), lr=configs['lr'])
 criterion = CornerNet_Loss()
@@ -86,7 +79,7 @@ if configs['mode'] == 'train':
 
             optimizer.zero_grad()
             outputs = net(images)
-            loss, hist = criterion(outputs,targets)
+            loss, hist = criterion(targets, outputs)
             loss = loss.mean()
             loss.backward()
             optimizer.step()
@@ -110,4 +103,9 @@ if configs['mode'] == 'test':
     optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
     epoch = checkpoint['epoch']
     loss = checkpoint['loss']
+
+'''
+for i, (images, targets) in enumerate(custom_loader):
+    save_tensor_image(images[0], targets[0])
+    break
 '''
