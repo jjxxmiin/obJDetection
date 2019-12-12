@@ -47,7 +47,7 @@ class CornerNet_Loss(nn.Module):
             if n == 0:
                 loss = loss - neg_loss.sum()
             else:
-                loss = loss - (pos_loss + neg_loss) / (n)
+                loss = loss - (pos_loss + neg_loss) / (n + 1e-4)
 
         return loss
 

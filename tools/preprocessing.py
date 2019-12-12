@@ -55,10 +55,10 @@ class CornerNet_Processing(object):
 
     @staticmethod
     def augment():
-        transform = augment.Compose([augment.Resize((511, 511)),
+        custom_transform = augment.Compose([augment.Resize((511, 511)),
                                      augment.ToTensor()])
-
-        return transform
+        torch_transform = None
+        return custom_transform, torch_transform
 
     def collate(self, batch):
         '''

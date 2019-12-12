@@ -45,7 +45,7 @@ class VGG(nn.Module):
 
         self.dense1 = nn.Linear(512 * 7 * 7, 4096)
         self.dense2 = nn.Linear(4096, 4096)
-        self.output = nn.Linear(4096, 1000)
+        self.output = nn.Linear(4096, classes)
 
     def forward(self, x):
         x = self.vgg16(x)

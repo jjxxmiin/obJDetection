@@ -1,10 +1,7 @@
-import torch.optim as optim
 from tools.preprocessing import Yolo_Processing
-from datasets.coco import CocoDataset
-from datasets.pascal_voc import VocDataset
-from models.Detection.Yolov3 import Yolov3
 from tools.tester import *
 from models.module.loss import *
+from datasets.loader import Loader
 
 if torch.cuda.is_available():
     device = 'cuda'
@@ -25,50 +22,8 @@ configs = {
 }
 
 preprocessing = Yolo_Processing()
-
-custom_transform, torch_transform = preprocessing.augment()
-
-if configs['dataset'] == 'COCO':
-    # classes 80
-    dataDir = './datasets/coco'
-    dataType = 'train2017'
-
-    img_path = '{}/{}'.format(dataDir, dataType)
-    ann_path = '{}/annotations/instances_{}.json'.format(dataDir, dataType)
-    label_path = './datasets/coco_labels.txt'
-
-    custom_coco = CocoDataset(img_path, ann_path, label_path,
-                              torch_transform=torch_transform,
-                              custom_transform=custom_transform)
-
-    custom_loader = torch.utils.data.DataLoader(
-        dataset=custom_coco,
-        batch_size=configs['batch_size'],
-        shuffle=True,
-        collate_fn=preprocessing.collate)
-
-if configs['dataset'] == 'VOC':
-    # classes 20
-    year = '2007'
-
-    img_path = './datasets/voc/VOC{}/JPEGImages'.format(year)
-    ann_path = './datasets/voc/VOC{}/Annotations'.format(year)
-    split_path = './datasets/voc/VOC{}/ImageSets/Main'.format(year)
-
-    custom_transform, torch_transform = preprocessing.augment()
-
-    custom_voc = VocDataset(
-        img_path,
-        ann_path,
-        torch_transform=torch_transform,
-        custom_transform=custom_transform)
-
-    custom_loader = torch.utils.data.DataLoader(
-        dataset=custom_voc,
-        batch_size=configs['batch_size'],
-        shuffle=True,
-        collate_fn=preprocessing.collate)
-
+loader = Loader(configs, preprocessing)
+custom_loader = loader.get_loader()
 
 for i, (images, targets) in enumerate(custom_loader):
     save_tensor_image(images[0], targets[0])
