@@ -1,4 +1,3 @@
-import torch
 import torch.nn as nn
 from models.module.layers import Conv_bn_relu
 

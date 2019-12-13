@@ -48,7 +48,7 @@ datasets
 
 
 
-![obj](./obj.PNG)
+![obj](contents/obj.PNG)
 
 
 

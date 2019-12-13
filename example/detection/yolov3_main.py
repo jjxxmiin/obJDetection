@@ -1,7 +1,7 @@
 from tools.preprocessing import Yolo_Processing
 from tools.tester import *
 from models.module.loss import *
-from datasets.loader import Loader
+from datasets.loader import VOC
 
 if torch.cuda.is_available():
     device = 'cuda'
@@ -11,18 +11,20 @@ else:
     #torch.set_default_tensor_type('torch.FloatTensor')
 
 configs = {
+    'task': 'detection',
     'model': 'yolov3',
     'backbone': 'darknet53',
     'dataset': 'VOC',
-    'lr': 0.0025,
     'classes': 20,
     'mode': 'train',
+
+    'lr': 0.0025,
     'epoch': 100,
     'batch_size': 1,
 }
 
 preprocessing = Yolo_Processing()
-loader = Loader(configs, preprocessing)
+loader = VOC(configs, preprocessing)
 custom_loader = loader.get_loader()
 
 for i, (images, targets) in enumerate(custom_loader):
