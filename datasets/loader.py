@@ -67,17 +67,15 @@ class VOC(object):
 
 class STL10(object):
     def __init__(self,
-                 configs,
-                 transformer):
+                 configs):
 
         self.classes = 10
         self.configs = configs
-        self.transformer = transformer
 
-    def get_loader(self, mode='train'):
+    def get_loader(self, transformer, mode='train'):
         stl10_dataset = torchvision.datasets.STL10(root='./datasets',
                                                    split=mode,
-                                                   transform=self.transformer,
+                                                   transform=transformer,
                                                    download=True)
 
         stl10_loader = torch.utils.data.DataLoader(stl10_dataset,
@@ -88,14 +86,12 @@ class STL10(object):
 
 class CIFAR10(object):
     def __init__(self,
-                 batch_size,
-                 transformer):
+                 batch_size):
 
         self.classes = 10
         self.batch_size = batch_size
-        self.transformer = transformer
 
-    def get_loader(self, mode='train'):
+    def get_loader(self, transformer, mode='train', shuffle=True):
         if mode == 'train':
             train = True
         else:
@@ -103,11 +99,11 @@ class CIFAR10(object):
 
         cifar10_dataset = torchvision.datasets.CIFAR10(root='./datasets',
                                                        train=train,
-                                                       transform=self.transformer,
+                                                       transform=transformer,
                                                        download=True)
 
         cifar10_loader = torch.utils.data.DataLoader(cifar10_dataset,
                                                      batch_size=self.batch_size,
-                                                     shuffle=True)
+                                                     shuffle=shuffle)
 
         return cifar10_loader

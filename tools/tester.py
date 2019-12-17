@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 
 
-def save_tensor_image(image, boxes=None):
+def save_tensor_image(image, boxes=None, saved_path='test.png'):
     '''
     :param image: (tensor) cpu image
     :return: (file) save image
@@ -18,6 +18,6 @@ def save_tensor_image(image, boxes=None):
             loc = np.floor(box)
             image = cv2.rectangle(image, (loc[0], loc[1]), (loc[2], loc[3]), (255, 0, 0), 3)
 
-    cv2.imwrite('test.png', image)
+    cv2.imwrite(saved_path, image)
 
     print('Finish image save testing')

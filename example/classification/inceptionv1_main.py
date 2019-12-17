@@ -26,22 +26,29 @@ configs = {
     'classes': 10,
     'mode': 'train',
 
-    'lr': 0.01,
-    'epochs': 200,
-    'batch_size': 32,
-    'save_path': './model.pth'
+    'lr': 0.001,
+    'epochs': 100,
+    'batch_size': 64,
+    'save_path': './model2.pth',
+    'load_path': './log/model2.pth'
 }
 
+class_name = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+
 # augmentation
-transformer = transforms.Compose([transforms.Resize(32),
-                                  transforms.ToTensor(),
-                                  transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+train_transformer = transforms.Compose([transforms.Resize(32),
+                                        #transforms.RandomHorizontalFlip(),
+                                        #transforms.RandomCrop(size=(32, 32), padding=4),
+                                        transforms.ToTensor()])
+
+test_transformer = transforms.Compose([transforms.Resize(32),
+                                       transforms.ToTensor()])
 
 # datasets/loader/downloads
-datasets = CIFAR10(batch_size=configs['batch_size'], transformer=transformer)
+datasets = CIFAR10(batch_size=configs['batch_size'])
 
-train_loader = datasets.get_loader('train')
-test_loader = datasets.get_loader('test')
+train_loader = datasets.get_loader(train_transformer, 'train')
+test_loader = datasets.get_loader(test_transformer, 'test')
 
 # model
 model = GoogLeNet(classes=configs['classes']).to(device)
@@ -55,16 +62,26 @@ criterion = nn.CrossEntropyLoss().to(device)
 # optimizer/scheduler
 optimizer = optim.Adam(model.parameters(), lr=configs['lr'])
 scheduler = optim.lr_scheduler.MultiStepLR(optimizer=optimizer,
-                                           milestones=[50, 100, 150],
+                                           milestones=[30, 60, 90],
                                            gamma=0.5)
+
+# model load
+if os.path.exists('./model2.pth'):
+    print("model loading...")
+    model.load_state_dict(torch.load(configs['load_path']))
+    print("model load complete")
+
 
 # augmentation image testing
 for i, (images, labels) in enumerate(train_loader):
-    save_tensor_image(images[0])
+    save_tensor_image(images[0], saved_path='test3.png')
+    save_tensor_image(images[1], saved_path='test4.png')
     break
 
 best_valid_acc = 0
-
+train_iter = len(train_loader)
+test_iter = len(test_loader)
+'''
 # train
 for epoch in range(configs['epochs']):
     train_loss = 0
@@ -74,7 +91,6 @@ for epoch in range(configs['epochs']):
     n_valid_correct = 0
 
     scheduler.step()
-
     for i, (images, labels) in enumerate(train_loader):
         images, labels = images.to(device), labels.to(device)
 
@@ -91,9 +107,10 @@ for epoch in range(configs['epochs']):
         loss.backward()
         # weight update
         optimizer.step()
+        #print("Batch [%d / %d]"%(train_iter, i))
 
-    train_acc = n_train_correct / (len(train_loader) * configs['batch_size'])
-    train_loss = train_loss / len(train_loader)
+    train_acc = n_train_correct / (train_iter * configs['batch_size'])
+    train_loss = train_loss / train_iter
 
     with torch.no_grad():
         for images, labels in test_loader:
@@ -108,12 +125,14 @@ for epoch in range(configs['epochs']):
             loss = criterion(pred, labels)
             valid_loss += loss.item()
 
-    valid_acc = n_valid_correct / (len(test_loader) * configs['batch_size'])
-    valid_loss = valid_loss / len(test_loader)
+    valid_acc = n_valid_correct / (test_iter * configs['batch_size'])
+    valid_loss = valid_loss / test_iter
 
-    print("Train [Acc / Loss] : [%f / %f] || Valid [Acc / Loss] : [%f / %f]" % (train_acc, train_loss, valid_acc, valid_loss))
+    print("Epoch [%d / %d] Train [Acc / Loss] : [%f / %f] || Valid [Acc / Loss] : [%f / %f]"
+          % (configs['epochs'], epoch, train_acc, train_loss, valid_acc, valid_loss))
 
     if valid_acc > best_valid_acc:
         print("model saved")
         torch.save(model.state_dict(), configs['save_path'])
         best_valid_acc = valid_acc
+'''
