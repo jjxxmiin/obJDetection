@@ -7,7 +7,7 @@ import torchvision.transforms as transforms
 from torchsummary import summary
 
 from tools.tester import save_tensor_image
-from models.Feature.GooLeNet import GoogLeNet
+from models.Feature.ResNet import ResNet18
 from datasets.loader import CIFAR10
 
 sys.path.append('.')
@@ -27,18 +27,18 @@ configs = {
     'mode': 'train',
 
     'lr': 0.001,
-    'epochs': 100,
+    'epochs': 200,
     'batch_size': 64,
-    'save_path': './model2.pth',
-    'load_path': './log/model2.pth'
+    'save_path': './resnet18_model.pth',
+    'load_path': './resnet18_model.pth'
 }
 
 class_name = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
 
 # augmentation
-train_transformer = transforms.Compose([transforms.Resize(32),
-                                        #transforms.RandomHorizontalFlip(),
-                                        #transforms.RandomCrop(size=(32, 32), padding=4),
+train_transformer = transforms.Compose([transforms.Resize(128),
+                                        transforms.RandomHorizontalFlip(),
+                                        transforms.RandomCrop(size=(128, 128), padding=4),
                                         transforms.ToTensor()])
 
 test_transformer = transforms.Compose([transforms.Resize(32),
@@ -51,10 +51,10 @@ train_loader = datasets.get_loader(train_transformer, 'train')
 test_loader = datasets.get_loader(test_transformer, 'test')
 
 # model
-model = GoogLeNet(classes=configs['classes']).to(device)
+model = ResNet18(classes=configs['classes']).to(device)
 
 # summary
-summary(model, (3, 32, 32))
+summary(model, (3, 128, 128))
 
 # cost
 criterion = nn.CrossEntropyLoss().to(device)
@@ -66,7 +66,7 @@ scheduler = optim.lr_scheduler.MultiStepLR(optimizer=optimizer,
                                            gamma=0.5)
 
 # model load
-if os.path.exists('./model2.pth'):
+if os.path.exists(configs['load_path']):
     print("model loading...")
     model.load_state_dict(torch.load(configs['load_path']))
     print("model load complete")
@@ -74,14 +74,13 @@ if os.path.exists('./model2.pth'):
 
 # augmentation image testing
 for i, (images, labels) in enumerate(train_loader):
-    save_tensor_image(images[0], saved_path='test3.png')
-    save_tensor_image(images[1], saved_path='test4.png')
+    save_tensor_image(images[0], saved_path='test.png')
     break
 
 best_valid_acc = 0
 train_iter = len(train_loader)
 test_iter = len(test_loader)
-'''
+
 # train
 for epoch in range(configs['epochs']):
     train_loss = 0
@@ -135,4 +134,3 @@ for epoch in range(configs['epochs']):
         print("model saved")
         torch.save(model.state_dict(), configs['save_path'])
         best_valid_acc = valid_acc
-'''

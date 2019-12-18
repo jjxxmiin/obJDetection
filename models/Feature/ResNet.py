@@ -128,7 +128,7 @@ class Bottleneck(nn.Module):
 
 
 class ResNet(nn.Module):
-    def __init__(self, block, num_blocks, classes=1000):
+    def __init__(self, block, num_blocks, classes=6):
         super(ResNet, self).__init__()
         self.in_planes = 64
 
@@ -163,7 +163,6 @@ class ResNet(nn.Module):
         x = self.Block2(x)
         x = self.Block3(x)
         x = self.Block4(x)
-
         x = self.avg_pool2(x)
         x = x.view(x.size(0), -1)
         x = self.dense1(x)
@@ -171,21 +170,21 @@ class ResNet(nn.Module):
         return x
 
 
-def ResNet18():
-    return ResNet(BasicBlock, [2, 2, 2, 2])
+def ResNet18(classes):
+    return ResNet(BasicBlock, [2, 2, 2, 2], classes=classes)
 
 
-def ResNet34():
-    return ResNet(BasicBlock, [3, 4, 6, 3])
+def ResNet34(classes):
+    return ResNet(BasicBlock, [3, 4, 6, 3], classes=classes)
 
 
-def ResNet50():
-    return ResNet(Bottleneck, [3, 4, 6, 3])
+def ResNet50(classes):
+    return ResNet(Bottleneck, [3, 4, 6, 3], classes=classes)
 
 
-def ResNet101():
-    return ResNet(Bottleneck, [3, 4, 23, 3])
+def ResNet101(classes):
+    return ResNet(Bottleneck, [3, 4, 23, 3], classes=classes)
 
 
-def ResNet152():
-    return ResNet(Bottleneck, [3, 8, 36, 3])
+def ResNet152(classes):
+    return ResNet(Bottleneck, [3, 8, 36, 3], classes=classes)
