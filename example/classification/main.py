@@ -38,10 +38,11 @@ class_name = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'h
 # augmentation
 train_transformer = transforms.Compose([transforms.Resize(128),
                                         transforms.RandomHorizontalFlip(),
-                                        transforms.RandomCrop(size=(128, 128), padding=4),
+                                        transforms.RandomRotation(15),
+                                        transforms.RandomCrop(size=(128, 128), padding=12),
                                         transforms.ToTensor()])
 
-test_transformer = transforms.Compose([transforms.Resize(32),
+test_transformer = transforms.Compose([transforms.Resize(128),
                                        transforms.ToTensor()])
 
 # datasets/loader/downloads
@@ -74,7 +75,7 @@ if os.path.exists(configs['load_path']):
 
 # augmentation image testing
 for i, (images, labels) in enumerate(train_loader):
-    save_tensor_image(images[0], saved_path='test.png')
+    save_tensor_image(images[0], saved_path='./test.png')
     break
 
 best_valid_acc = 0
