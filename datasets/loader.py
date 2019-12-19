@@ -66,25 +66,34 @@ class VOC(object):
 
 
 class STL10(object):
+    """
+    image shape : 96 x 96
+    ['airplane', 'bird', 'car', 'cat', 'deer', 'dog', 'horse', 'monkey', 'ship', 'truck']
+    """
     def __init__(self,
-                 configs):
+                 batch_size):
 
         self.classes = 10
-        self.configs = configs
+        self.batch_size = batch_size
 
-    def get_loader(self, transformer, mode='train'):
+    def get_loader(self, transformer, mode='train', shuffle=True):
         stl10_dataset = torchvision.datasets.STL10(root='./datasets',
                                                    split=mode,
                                                    transform=transformer,
                                                    download=True)
 
         stl10_loader = torch.utils.data.DataLoader(stl10_dataset,
-                                                   batch_size=self.configs['batch_size'],
-                                                   shuffle=True)
+                                                   batch_size=self.batch_size,
+                                                   shuffle=shuffle)
         return stl10_loader
 
 
 class CIFAR10(object):
+    """
+    image shape : 32 x 32
+    ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+    """
+
     def __init__(self,
                  batch_size):
 

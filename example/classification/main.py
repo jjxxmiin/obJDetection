@@ -8,7 +8,7 @@ from torchsummary import summary
 
 from tools.tester import save_tensor_image
 from models.Feature.ResNet import ResNet18
-from datasets.loader import CIFAR10
+from datasets.loader import CIFAR10, STL10
 
 sys.path.append('.')
 
@@ -21,19 +21,20 @@ else:
 
 configs = {
     'task': 'classify',
-    'model': 'Inceptionv1',
+    'model': 'Resnet18',
     'dataset': 'STL10',
     'classes': 10,
     'mode': 'train',
 
     'lr': 0.001,
-    'epochs': 200,
+    'epochs': 300,
     'batch_size': 64,
-    'save_path': './resnet18_model.pth',
-    'load_path': './resnet18_model.pth'
+    'save_path': './resnet18_stl10_model.pth',
+    'load_path': './resnet18_stl10_model.pth'
 }
 
-class_name = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+#class_name = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+class_name = ['airplane', 'bird', 'car', 'cat', 'deer', 'dog', 'horse', 'monkey', 'ship', 'truck']
 
 # augmentation
 train_transformer = transforms.Compose([transforms.Resize(128),
@@ -46,7 +47,8 @@ test_transformer = transforms.Compose([transforms.Resize(128),
                                        transforms.ToTensor()])
 
 # datasets/loader/downloads
-datasets = CIFAR10(batch_size=configs['batch_size'])
+#datasets = CIFAR10(batch_size=configs['batch_size'])
+datasets = STL10(batch_size=configs['batch_size'])
 
 train_loader = datasets.get_loader(train_transformer, 'train')
 test_loader = datasets.get_loader(test_transformer, 'test')
@@ -63,7 +65,7 @@ criterion = nn.CrossEntropyLoss().to(device)
 # optimizer/scheduler
 optimizer = optim.Adam(model.parameters(), lr=configs['lr'])
 scheduler = optim.lr_scheduler.MultiStepLR(optimizer=optimizer,
-                                           milestones=[30, 60, 90],
+                                           milestones=[100, 150, 250],
                                            gamma=0.5)
 
 # model load
