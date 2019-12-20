@@ -10,6 +10,7 @@ Reference:
 
 
 import torch.nn as nn
+from models.module.pooling import GAP
 
 
 class BasicBlock(nn.Module):
@@ -163,8 +164,9 @@ class ResNet(nn.Module):
         x = self.Block2(x)
         x = self.Block3(x)
         x = self.Block4(x)
-        x = self.avg_pool2(x)
-        x = x.view(x.size(0), -1)
+        x = GAP()(x)
+        #x = self.avg_pool2(x)
+        #x = x.view(x.size(0), -1)
         x = self.dense1(x)
 
         return x
