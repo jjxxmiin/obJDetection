@@ -69,6 +69,8 @@ class STL10(object):
     """
     image shape : 96 x 96
     ['airplane', 'bird', 'car', 'cat', 'deer', 'dog', 'horse', 'monkey', 'ship', 'truck']
+
+    unlabeled ++
     """
     def __init__(self,
                  batch_size):

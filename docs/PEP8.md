@@ -1,13 +1,121 @@
-## PEP8
+---
+title:  "PEP8"
+summary: "Python Coding RULE"
+categories: python
+---
 
-- 세로로 정렬시켜주어야한다.
+# PEP8
+- [https://www.python.org/dev/peps/pep-0008/](https://www.python.org/dev/peps/pep-0008/) : 공식 홈페이지
+
+공식 홈페이지의 document를 이용해서 간단히 정리해보면서 알아가보자
+
+## PEP8 이란??
+PEP은 python enhance proposal 이라는 뜻인데 python 개선 제안서를 의미한다. 즉, PEP8은 python을 개선하는 제안서 중에서 코딩 규칙에 대한 제안서라는 뜻이다.
+
+초반을 읽어보면 style guide는 일관성이 중요하다는 것을 강조하고 있다.
+
+---
+
+## Coding Lay-out
+
+### 들여쓰기(Indentation)
+
+- 들여쓰기에 4개의 spaces를 사용한다.
+- augmentation 수직 정렬
+- hanging indent를 사용할 때는 첫 번째 줄에 arguments가 없어야 하고 연속적으로 명확하게 구분하기 위해서 추가적으로 들여쓰기를 사용한다.
+
+**YES**
 
 ```python
+# 수직 정렬
 foo = long_function_name(var_one, var_two,
                          var_three, var_four)
+
+# arguments와 구분짓기 위해 추가적으로 4개의 spaces를 더 사용한다.
+def long_function_name(
+        var_one, var_two, var_three,
+        var_four):
+    print(var_one)
+
+# Hanging indents
+foo = long_function_name(
+    var_one, var_two,
+    var_three, var_four)
 ```
 
-- 모든 줄을 79자로 제한한다.
+**NO**
+
+```python
+# 수직 정렬 안됨
+foo = long_function_name(var_one, var_two,
+    var_three, var_four)
+
+# arguments와 구분이 안됨
+def long_function_name(
+    var_one, var_two, var_three,
+    var_four):
+    print(var_one)
+```
+
+**특별한 경우(YES)**
+
+- 조건문
+
+```python
+# 여분의 들여쓰기가 없다.
+if (this_is_one_thing and
+    that_is_another_thing):
+    do_something()
+
+# comment를 추가한다.
+# syntax highlighting을 지원한다.
+if (this_is_one_thing and
+    that_is_another_thing):
+    # Since both conditions are true, we can frobnicate.
+    do_something()
+
+# 여분의 들여쓰기를 추가한다.
+if (this_is_one_thing
+        and that_is_another_thing):
+    do_something()
+```
+
+- 괄호
+
+```python
+my_list = [
+    1, 2, 3,
+    4, 5, 6,
+    ]
+result = some_function_that_takes_arguments(
+    'a', 'b', 'c',
+    'd', 'e', 'f',
+    )
+
+or
+
+my_list = [
+    1, 2, 3,
+    4, 5, 6,
+]
+result = some_function_that_takes_arguments(
+    'a', 'b', 'c',
+    'd', 'e', 'f',
+)
+```
+
+### Tabs or Spaces?
+
+- python3는 Tabs와 spaces를 혼합해서 사용하면 안된다.
+
+- pthon2는 혼합해도 오류가 안나지만 spaces만 사용하도록 변환해야한다.
+
+- 고치기 위해서 -t 옵션을 사용하면 경고, -tt 옵션을 사용하면 오류가 된다.
+
+### 최대 줄 길이
+- 79자가 최대다. 넘어가면 그 다음 줄에 써야한다.
+- docstrings나 comment는 72자로 제한해야한다.
+- 긴 with문이나 assert문은 백 슬래시(`\`)를 사용한다.
 
 ```python
 with open('/path/to/some/file/you/want/to/read') as file_1, \
@@ -15,7 +123,19 @@ with open('/path/to/some/file/you/want/to/read') as file_1, \
     file_2.write(file_1.read())
 ```
 
-- 연산자는 아래에 붙여쓴다.
+### 연산자 전/후 줄바꿈
+
+**NO**
+
+```python
+income = (gross_wages +
+          taxable_interest +
+          (dividends - qualified_dividends) -
+          ira_deduction -
+          student_loan_interest)
+```
+
+**YES**
 
 ```python
 income = (gross_wages
@@ -25,37 +145,528 @@ income = (gross_wages
           - student_loan_interest)
 ```
 
-- 공백
+### 빈줄
+- 클래스,함수 : 빈줄 2개
+- 클래스 내부 메소드 : 빈줄 1개
 
-가장 높은 위치에 있는 함수와 클래스 사이에 2개의 공백 line을 사용한다.
-쓸모없는 space는 줄인다.
+### 소스 파일 인코딩
+- python3 : UTF-8
+- python2 : ASCII
 
-- 인코딩
+### Import
 
-`utf-8`
-
-- 한줄에 import 하나씩 하기
+**YES**
 
 ```python
 import os
 import sys
+
+from subprocess import Popen, PIPE
 ```
 
-- 이름 명명법
+**NO**
+
+```python
+import sys, os
 ```
+
+**그룹화**
+- standard library imports
+- third party imports
+- local application/library specific imports
+
+위 순서로 그룹 지어진다. 사이사이 빈 줄을 넣어야한다.
+
+절대경로를 권장한다.
+
+```python
+import mypkg.sibling
+from mypkg import sibling
+from mypkg.sibling import example
+```
+
+불필요하게 자세한 패키지는 상대경로가 허용된다.
+
+```python
+from . import sibling
+from .sibling import example
+```
+
+클래스가 포함된 모듈에서 클래스를 가져올 때
+
+```python
+from myclass import MyClass
+from foo.bar.yourclass import YourClass
+```
+
+이름이 충돌이 있는 경우
+
+```python
+import myclass
+import foo.bar.yourclass
+```
+
+### Module Level Dunder Names
+
+`dunders` : 앞뒤에 __ 가 있는 이름
+
+dunders는 `__future__ imports`를 제외한 모든 import문 앞에 배치해야한다.
+
+```python
+"""This is the example module.
+
+This module does stuff.
+"""
+
+from __future__ import barry_as_FLUFL
+
+__all__ = ['a', 'b', 'c']
+__version__ = '0.1'
+__author__ = 'Cardinal Biggles'
+
+import os
+import sys
+```
+
+---
+
+## 문자열 따옴표(String Quotes)
+
+작은 따옴표나 큰 따옴표 문자열은 동일하다. 둘 중 하나만 선택해서 사용한다.
+
+삼중 따옴표 : `""" """`(큰 따옴표 사용)
+
+---
+
+## Whitespace in Expressions and Statements
+
+### Pet Peeves
+
+아래와 같은 불필요한 공백을 피해라
+
+```python
+YES: spam(ham[1], {eggs: 2})
+NO:  spam( ham[ 1 ], { eggs: 2 } )
+```
+
+```python
+YES: foo = (0,)
+NO:  bar = (0, )
+```
+
+```python
+YES: if x == 4: print x, y; x, y = y, x
+NO:  if x == 4 : print x , y ; x , y = y , x
+```
+
+**YES**
+
+```python
+ham[1:9], ham[1:9:3], ham[:9:3], ham[1::3], ham[1:9:]
+ham[lower:upper], ham[lower:upper:], ham[lower::step]
+ham[lower+offset : upper+offset]
+ham[: upper_fn(x) : step_fn(x)], ham[:: step_fn(x)]
+ham[lower + offset : upper + offset]
+```
+
+**NO**
+
+```python
+ham[lower + offset:upper + offset]
+ham[1: 9], ham[1 :9], ham[1:9 :3]
+ham[lower : : upper]
+ham[ : upper]
+```
+
+```python
+YES: spam(1)
+NO:  spam (1)
+```
+
+```python
+YES: dct['key'] = lst[index]
+NO:  dct ['key'] = lst [index]
+```
+
+**YES**
+
+```python
+x = 1
+y = 2
+long_variable = 3
+```
+
+**NO**
+
+```python
+x             = 1
+y             = 2
+long_variable = 3
+```
+
+### Other Recommendations
+
+**YES**
+
+```python
+i = i + 1
+submitted += 1
+x = x*2 - 1
+hypot2 = x*x + y*y
+c = (a+b) * (a-b)
+```
+
+**NO**
+
+```python
+i=i+1
+submitted +=1
+x = x * 2 - 1
+hypot2 = x * x + y * y
+c = (a + b) * (a - b)
+```
+
+**YES**
+
+```python
+def munge(input: AnyStr): ...
+def munge() -> PosInt: ...
+```
+
+**NO**
+
+```python
+def munge(input:AnyStr): ...
+def munge()->PosInt: ...
+```
+
+**YES**
+
+```python
+def complex(real, imag=0.0):
+    return magic(r=real, i=imag)
+```
+
+**NO**
+
+```python
+def complex(real, imag = 0.0):
+    return magic(r = real, i = imag)
+```
+
+**YES**
+
+```python
+def munge(sep: AnyStr = None): ...
+def munge(input: AnyStr, sep: AnyStr = None, limit=1000): ...
+```
+
+**NO**
+
+```python
+def munge(input: AnyStr=None): ...
+def munge(input: AnyStr, limit = 1000): ...
+```
+
+**YES**
+
+```python
+if foo == 'blah':
+    do_blah_thing()
+do_one()
+do_two()
+do_three()
+```
+
+**NO**
+
+```python
+Rather not:
+
+if foo == 'blah': do_blah_thing()
+do_one(); do_two(); do_three()
+
+Rather not:
+
+if foo == 'blah': do_blah_thing()
+for x in lst: total += x
+while t < 10: t = delay()
+
+Definitely not:
+
+if foo == 'blah': do_blah_thing()
+else: do_non_blah_thing()
+
+try: something()
+finally: cleanup()
+
+do_one(); do_two(); do_three(long, argument,
+                             list, like, this)
+
+if foo == 'blah': one(); two(); three()
+```
+
+---
+
+## When to Use Trailing Commas
+
+후행쉼표
+
+**YES**
+
+```python
+FILES = [
+    'setup.cfg',
+    'tox.ini',
+    ]
+initialize(FILES,
+           error=True,
+           )
+```
+
+**NO**
+
+```python
+FILES = ['setup.cfg', 'tox.ini',]
+initialize(FILES, error=True,)
+```
+
+---
+
+## Comments
+- 주석은 최신 상태로 유지해야한다.
+- 주석은 완전한 문장이어야 하고 첫 단어는 대문자로 표기해야한다. 식별자인 경우 그대로 써야한다.
+- 블럭 주석은 완전한 문장으로 구성된 단락이고 각 문장은 마침표로 끝난다.
+- 마침표 뒤에 두 칸의 spaces를 둔다.
+- 영어로 써야한다.
+
+### Block Comments
+- 블록 주석은 뒤에 따라오는 코드에 대한 설명이고 들여쓰기를 맞춰야한다.
+
+- 블록 주석의 단락은 #으로 구분한다.
+
+
+### Inline Comments
+- 자주 사용하면 안된다.
+- 최소한 두개의 spaces로 분리해야한다.
+
+inline comments는 불필요하고 명백한 경우 복잡해진다. 아래와 같이 사용하면 안된다.
+
+```python
+x = x + 1                 # Increment x
+```
+
+때로는 유용한다.
+
+```python
+x = x + 1                 # Compensate for border
+```
+
+### Documentation Strings
+- public 모듈, 함수, 클래스, 메소드에 대한 docstrings을 작성해야한다.
+- non-public 메소드에는 필요하지 않다.
+- 메소드가 무슨 역할을 하는지 def 바로 아래줄에 위치하도록 하는게 좋다.
+- docstrings 마지막 줄은 `"""`로 끝낸다.
+
+```python
+"""Return a foobang
+
+Optional plotz says to frobnicate the bizbaz first.
+"""
+```
+
+---
+## 명명 스타일(Naming Styles)
+
+```python
+b (single lowercase letter)
+
+B (single uppercase letter)
+
+lowercase
+
+lower_case_with_underscores
+
+UPPERCASE
+
+UPPER_CASE_WITH_UNDERSCORES
+
+CapitalizedWords (or CapWords, or CamelCase -- so named because of the bumpy look of its letters [4]). This is also sometimes known as StudlyCaps.
+
+Note: When using acronyms in CapWords, capitalize all the letters of the acronym. Thus HTTPServerError is better than HttpServerError.
+
+mixedCase (differs from CapitalizedWords by initial lowercase character!)
+
+Capitalized_Words_With_Underscores (ugly!)
+```
+
+## 명명 규칙(Naming Conventions)
+
+- `I,O,l`를 단일 문자 변수 이름으로 사용하면 안된다.
+
+```python
 ClassName
+
 ExceptionName
+
 module_name
+
 package_name
+
 method_name
+
 function_name
+
 function_parameter_name
+
 global_var_name
+
 local_var_name
+
 instance_var_name
 
 GLOBAL_CONSTANT_NAME
 ```
 
+---
+
+## Programming Recommendations
+
+- is not 사용법
+
+**YES**
+```python
+if foo is not None:
+```
+
+**NO**
+
+```python
+if not foo is None:
+```
+
+- lambda 식을 식별자에 직접 바인딩하는 할당 문 대신 항상 def문을 사용해야한다.
+
+**YES**
+
+```python
+def f(x): return 2*x
+```
+
+**NO**
+
+```python
+f = lambda x: 2*x
+```
+
+- try / except 절에서 try절을 필요한 최소 코드 양으로 제한해야한다.
+
+**YES**
+
+```python
+try:
+    value = collection[key]
+except KeyError:
+    return key_not_found(key)
+else:
+    return handle_value(value)
+```
+
+**NO**
+
+```python
+try:
+    # Too broad!
+    return handle_value(collection[key])
+except KeyError:
+    # Will also catch KeyError raised by handle_value()
+    return key_not_found(key)
+```
+
+- 컨텍스트 관리자는 자원 확보 및 해제 이외의 작업을 수행 할 때마다 별도의 함수나 메소드를 통해 호출해야한다.
+
+**YES**
+
+```python
+with conn.begin_transaction():
+    do_stuff_in_transaction(conn)
+```
+
+**NO**
+
+```python
+with conn:
+    do_stuff_in_transaction(conn)
+```
+
+- return문에서 일관성을 유지해야한다.
+- 값이 return 되지 않는 구문에서는 return None으로 표현해야한다.
+
+**YES**
+
+```python
+def foo(x):
+    if x >= 0:
+        return math.sqrt(x)
+    else:
+        return None
+
+def bar(x):
+    if x < 0:
+        return None
+    return math.sqrt(x)
+```
+
+**NO**
+
+```python
+def foo(x):
+    if x >= 0:
+        return math.sqrt(x)
+
+def bar(x):
+    if x < 0:
+        return
+    return math.sqrt(x)
+```
+
+- 접두사나 접미사를 확인 할 때 문자열 슬라이싱 대신 `.startswith()`와 `.endswith()`를 사용해야한다.
+
+```python
+YES: if foo.startswith('bar'):
+NO:  if foo[:3] == 'bar':
+```
+
+- 객체 유형을 비교할 때
+
+```python
+YES: if isinstance(obj, int):
+NO:  if type(obj) is type(1):
+```
+
+- 유니코드 문자열 일 때
+
+```python
+if isinstance(obj, basestring):
+```
+
+- 시퀀스(strings, lists, tuples)가 비어있을 때 조건문은 아래와 같이 사용한다.
+
+```python
+YES: if not seq:
+     if seq:
+
+NO:  if len(seq):
+     if not len(seq):
+```
+
+- `==`을 사용해서 bool값을 비교하면 안된다.
+
+```python
+YES:   if greeting:
+NO:    if greeting == True:
+WORSE: if greeting is True:
+```
+
 # REFERENCE
-- [https://www.python.org/dev/peps/pep-0008/#a-foolish-consistency-is-the-hobgoblin-of-little-minds](https://www.python.org/dev/peps/pep-0008/#a-foolish-consistency-is-the-hobgoblin-of-little-minds)
+- [https://www.python.org/dev/peps/pep-0008/#id8](https://www.python.org/dev/peps/pep-0008/#id8)
