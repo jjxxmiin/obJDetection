@@ -1,6 +1,4 @@
-import torch.nn as nn
-from models.module.layers import *
-from tools.tester import model_tester
+from src.models.module.layers import *
 
 
 class MobileNetv1(nn.Module):

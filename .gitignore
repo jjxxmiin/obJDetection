@@ -1,2 +1,2 @@
-datasets/coco/
-datasets/voc/
+src/datasets/coco/
+src/datasets/voc/

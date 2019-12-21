@@ -1,7 +1,7 @@
 import torch
 import torchvision
-from datasets.coco import CocoDataset
-from datasets.pascal_voc import VocDataset
+from src.datasets.coco import CocoDataset
+from src.datasets.pascal_voc import VocDataset
 
 
 class COCO(object):

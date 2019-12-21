@@ -1,16 +1,17 @@
 import torch
 import torch.optim as optim
-from tools.preprocessing import CornerNet_Processing
-from models.module.loss import CornerNet_Loss
-from models.Detection.CornerNet import CornerNet
-from datasets.loader import VOC
+from src.datasets.preprocessing import CornerNet_Processing
+from src.datasets.loader import VOC
+from src.models.loss import CornerNet_Loss
+from src.models.detection.CornerNet import CornerNet
+
 
 if torch.cuda.is_available():
     device = 'cuda'
-    #torch.set_default_tensor_type('torch.cuda.FloatTensor')
+    torch.set_default_tensor_type('torch.cuda.FloatTensor')
 else:
     device = 'cpu'
-    #torch.set_default_tensor_type('torch.FloatTensor')
+    torch.set_default_tensor_type('torch.FloatTensor')
 
 configs = {
     'task': 'detection',
@@ -69,7 +70,7 @@ if configs['mode'] == 'test':
     loss = checkpoint['loss']
 
 '''
-from tools.tester import *
+from src.tools.tester import *
 
 for i, (images, targets) in enumerate(custom_loader):
     save_tensor_image(images[0], targets[0])

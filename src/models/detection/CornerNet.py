@@ -3,9 +3,9 @@ REFERENCE : https://github.com/feifeiwei/Pytorch-CornerNet
 """
 
 import torch.nn as nn
-from models.Feature.Hourglass import hourglassNet
-from models.module.corner_pooling import *
-from models.module.layers import Conv_bn, Conv_bn_relu
+from src.models.feature.Hourglass import hourglassNet
+from src.models.module.corner_pooling import *
+from src.models.module.layers import Conv_bn, Conv_bn_relu
 
 
 class CornerNet(nn.Module):

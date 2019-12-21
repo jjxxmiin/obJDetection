@@ -1,8 +1,6 @@
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from models.module.layers import *
-from models.Feature.Darknet import Darknet53
+from src.models.module.layers import *
+from src.models.feature.Darknet import Darknet53
 
 _ANCHORS = [(10, 13), (16, 30), (33, 23),
             (30, 61), (62, 45), (59, 119),

@@ -1,5 +1,5 @@
 import torch.nn as nn
-from models.module.layers import Conv_bn_relu
+from src.models.module.layers import Conv_bn_relu
 
 
 # 12884

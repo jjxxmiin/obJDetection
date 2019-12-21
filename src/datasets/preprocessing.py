@@ -1,7 +1,7 @@
 import torch
-import tools.augmentation as augment
+import src.datasets.augmentation as augment
 import torchvision.transforms as transformer
-from tools.utils import *
+from src.tools.utils import *
 
 
 def custom_collate(batch):
