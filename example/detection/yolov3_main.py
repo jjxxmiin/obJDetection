@@ -1,6 +1,6 @@
+import torch
 from tools.preprocessing import Yolo_Processing
-from tools.tester import *
-from models.module.loss import *
+from models.module.loss import Yolov3_Loss
 from datasets.loader import VOC
 
 if torch.cuda.is_available():
@@ -26,6 +26,8 @@ configs = {
 preprocessing = Yolo_Processing()
 loader = VOC(configs, preprocessing)
 custom_loader = loader.get_loader()
+
+from tools.tester import *
 
 for i, (images, targets) in enumerate(custom_loader):
     save_tensor_image(images[0], targets[0])

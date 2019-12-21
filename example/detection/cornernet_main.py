@@ -1,8 +1,8 @@
+import torch
 import torch.optim as optim
 from tools.preprocessing import CornerNet_Processing
+from models.module.loss import CornerNet_Loss
 from models.Detection.CornerNet import CornerNet
-from tools.tester import *
-from models.module.loss import *
 from datasets.loader import VOC
 
 if torch.cuda.is_available():
@@ -69,6 +69,8 @@ if configs['mode'] == 'test':
     loss = checkpoint['loss']
 
 '''
+from tools.tester import *
+
 for i, (images, targets) in enumerate(custom_loader):
     save_tensor_image(images[0], targets[0])
     break

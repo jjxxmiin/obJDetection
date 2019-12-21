@@ -1,6 +1,10 @@
 import torch
 import torch.nn as nn
 
+class Yolov3_Loss(nn.Module):
+    def __init__(self, targets, anchors, num_):
+        super(Yolov3_Loss, self).__init__()
+
 
 class CornerNet_Loss(nn.Module):
     """
