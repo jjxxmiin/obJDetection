@@ -8,9 +8,9 @@ Reference:
 - https://github.com/pytorch/vision/blob/master/torchvision/models/resnet.py
 '''
 
-
+import torch
 import torch.nn as nn
-from src.models.module.pooling import GVAP
+from src.models.module.pooling import GVAP, GAP
 
 
 class BasicBlock(nn.Module):
@@ -129,9 +129,11 @@ class Bottleneck(nn.Module):
 
 
 class ResNet(nn.Module):
-    def __init__(self, block, num_blocks, classes=6):
+    def __init__(self, block, num_blocks, classes=6, alpha=1, cal='plus'):
         super(ResNet, self).__init__()
         self.in_planes = 64
+        self.alpha = alpha
+        self.cal = cal
 
         self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3)
         self.bn1 = nn.BatchNorm2d(64)
@@ -143,8 +145,15 @@ class ResNet(nn.Module):
         self.Block3 = self._make_layer(block, 256, num_blocks[2], stride=2)
         self.Block4 = self._make_layer(block, 512, num_blocks[3], stride=2)
 
-        self.avg_pool2 = nn.AvgPool2d(kernel_size=4)
+        #self.avg_pool2 = nn.AvgPool2d(kernel_size=4)
         self.dense1 = nn.Linear(512 * block.expansion, classes)
+
+    @staticmethod
+    def weights_init(m):
+        if type(m) == nn.Linear:
+            torch.nn.init.xavier_uniform(m.weight)
+        elif type(m) == nn.Conv2d:
+            torch.nn.init.xavier_uniform(m.weight)
 
     def _make_layer(self, block, planes, num_blocks, stride):
         strides = [stride] + [1] * (num_blocks - 1)
@@ -164,16 +173,16 @@ class ResNet(nn.Module):
         x = self.Block2(x)
         x = self.Block3(x)
         x = self.Block4(x)
-        x = GVAP()(x)
+        x = GVAP(self.alpha, self.cal)(x)
         #x = self.avg_pool2(x)
-        #x = x.view(x.size(0), -1)
+        x = x.view(x.size(0), -1)
         x = self.dense1(x)
 
         return x
 
 
-def ResNet18(classes):
-    return ResNet(BasicBlock, [2, 2, 2, 2], classes=classes)
+def ResNet18(classes, alpha, cal):
+    return ResNet(BasicBlock, [2, 2, 2, 2], classes=classes, alpha=alpha, cal=cal)
 
 
 def ResNet34(classes):
